@@ -38,6 +38,11 @@ import {
   googleDriveIntegration,
 } from "./google-drive-import-export";
 
+import {
+  FBEditor,
+  frameBasedEditor,
+} from "./frame-based";
+
 export interface IPytchAppModel {
   navigationRequestQueue: NavigationRequestQueue;
   projectCollection: IProjectCollection;
@@ -56,6 +61,7 @@ export interface IPytchAppModel {
   projectFromSpecimenFlow: ProjectFromSpecimenFlow;
   clipArtGallery: IClipArtGallery;
   googleDriveImportExport: GoogleDriveIntegration;
+  frameBasedEditor: FBEditor;
 }
 
 export type PytchAppModelActions = Actions<IPytchAppModel>;
@@ -78,4 +84,5 @@ export const pytchAppModel: IPytchAppModel = {
   projectFromSpecimenFlow,
   clipArtGallery,
   googleDriveImportExport: googleDriveIntegration,
+  frameBasedEditor,
 };
