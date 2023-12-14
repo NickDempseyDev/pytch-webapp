@@ -1,29 +1,50 @@
-import { FBFrameT, FBTypes } from "../../model/frame-based"
+import { 
+	FBAssignment, 
+	FBClassDefinition, 
+	FBComment, 
+	FBExpression, 
+	FBFor, 
+	FBFrame, 
+	FBFunctionCall, 
+	FBFunctionDefinition, 
+	FBIf, 
+	FBTypes, 
+	FBWhile 
+} from "../../model/frame-based"
+import IfFrame from "./frames/IfFrame"
+import WhileFrame from "./frames/WhileFrame"
+import ForFrame from "./frames/ForFrame"
+import AssignmentFrame from "./frames/AssignmentFrame"
+import ClassDefinitionFrame from "./frames/ClassDefinitionFrame"
+import CommentFrame from "./frames/CommentFrame"
+import ExpressionFrame from "./frames/ExpressionFrame"
+import FunctionCallFrame from "./frames/FunctionCallFrame"
+import FunctionDefinitionFrame from "./frames/FunctionDefinitionFrame"
 
 type FrameProps = {
-	frame: FBFrameT
+	frame: FBFrame;
 }
 
-const Frame = (props: FrameProps) => {
-	switch (props.frame.type) {
+const getFrameComponent = (frame: FBFrame) => {
+	switch (frame.type) {
 		case FBTypes.IF:
-			return <div></div>;
+			return <IfFrame frame={frame as FBIf}/>
 		case FBTypes.WHILE:
-			return <div></div>;
+			return <WhileFrame frame={frame as FBWhile}/>
 		case FBTypes.FOR:
-			return <div></div>;
+			return <ForFrame frame={frame as FBFor}/>;
 		case FBTypes.ASSIGNMENT:
-			return <div></div>;
+			return <AssignmentFrame frame={frame as FBAssignment}/>;
 		case FBTypes.CLASS_DEFINITION:
-			return <div></div>;
+			return <ClassDefinitionFrame frame={frame as FBClassDefinition}/>;
 		case FBTypes.COMMENT:
-			return <div></div>;
+			return <CommentFrame frame={frame as FBComment}/>;
 		case FBTypes.EXPRESSION:
-			return <div></div>;
+			return <ExpressionFrame frame={frame as FBExpression}/>;
 		case FBTypes.FUNCTION_CALL:
-			return <div></div>;
+			return <FunctionCallFrame frame={frame as FBFunctionCall}/>;
 		case FBTypes.FUNCTION_DEFINITION:
-			return <div></div>;	
+			return <FunctionDefinitionFrame frame={frame as FBFunctionDefinition}/>;	
 		case FBTypes.NOP:
 			return <div></div>;
 		default:
@@ -33,6 +54,12 @@ const Frame = (props: FrameProps) => {
 				</div>
 			)
 	}
+}
+
+const Frame = (props: FrameProps) => {
+	return (
+		getFrameComponent(props.frame)
+	)
 }
 
 export default Frame

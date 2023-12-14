@@ -13,7 +13,7 @@ export enum FBTypes {
 	CLASS_DEFINITION,
 }
 
-type FBFrame = {
+type FBFrameBase = {
 	type: FBTypes;
 	id: number;
 	depth: number;
@@ -22,50 +22,50 @@ type FBFrame = {
 	extractTextualPython: (childre: FBFrame[]) => string;
 }
 
-export type FBNOP = FBFrame;
+export type FBNOP = FBFrameBase;
 
 export type FBExpression = {
 	text: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBIf = {
 	booleanExpression: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBWhile = {
 	booleanExpression: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBFor = {
 	iterator: string;
 	collection: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBAssignment = {
 	variable: string;
 	value: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBComment = {
 	text: string;
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBFunctionDefinition = {
 	name: string;
 	parameters: string[];
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBFunctionCall = {
 	name: string;
 	parameters: string[];
-} & FBFrame;
+} & FBFrameBase;
 
 export type FBClassDefinition = {
 	name: string;
 	parameters: string[];
-} & FBFrame;
+} & FBFrameBase;
 
-export type FBFrameT = FBNOP | FBExpression | FBIf | FBWhile | FBFor | FBAssignment | FBComment | FBFunctionDefinition | FBFunctionCall | FBClassDefinition;
+export type FBFrame = FBNOP | FBExpression | FBIf | FBWhile | FBFor | FBAssignment | FBComment | FBFunctionDefinition | FBFunctionCall | FBClassDefinition;
 
 const creatNOP = (id: number, depth: number): FBNOP => {
 	return {
