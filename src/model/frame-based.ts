@@ -13,74 +13,74 @@ export enum FBTypes {
 	CLASS_DEFINITION,
 }
 
-type FBFrameBase = {
+type FBBaseFrameT = {
 	type: FBTypes;
 	id: number;
 	depth: number;
 	canHaveChildren: boolean;
-	children: FBFrame[];
-	extractTextualPython: (childre: FBFrame[]) => string;
+	children: FBFrameT[];
+	extractTextualPython: (childre: FBFrameT[]) => string;
 }
 
-export type FBNOP = FBFrameBase;
+export type FBNOPT = FBBaseFrameT;
 
-export type FBExpression = {
+export type FBExpressionT = {
 	text: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBIf = {
+export type FBIfT = {
 	booleanExpression: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBWhile = {
+export type FBWhileT = {
 	booleanExpression: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBFor = {
+export type FBForT = {
 	iterator: string;
 	collection: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBAssignment = {
+export type FBAssignmentT = {
 	variable: string;
 	value: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBComment = {
+export type FBCommentT = {
 	text: string;
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBFunctionDefinition = {
+export type FBFunctionDefinitionT = {
 	name: string;
 	parameters: string[];
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBFunctionCall = {
+export type FBFunctionCallT = {
 	name: string;
 	parameters: string[];
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBClassDefinition = {
+export type FBClassDefinitionT = {
 	name: string;
 	parameters: string[];
-} & FBFrameBase;
+} & FBBaseFrameT;
 
-export type FBFrame = FBNOP | FBExpression | FBIf | FBWhile | FBFor | FBAssignment | FBComment | FBFunctionDefinition | FBFunctionCall | FBClassDefinition;
+export type FBFrameT = FBNOPT | FBExpressionT | FBIfT | FBWhileT | FBForT | FBAssignmentT | FBCommentT | FBFunctionDefinitionT | FBFunctionCallT | FBClassDefinitionT;
 
-const creatNOP = (id: number, depth: number): FBNOP => {
+const creatNOP = (id: number, depth: number): FBNOPT => {
 	return {
 		type: FBTypes.NOP,
 		id,
 		depth,
 		canHaveChildren: true,
 		children: [],
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			return children.map((child) => child.extractTextualPython(child.children)).join("\n");
 		}
 	}
 }
 
-export const createIf = (booleanExpression: string, id: number, depth: number): FBIf => {
+export const createIf = (booleanExpression: string, id: number, depth: number): FBIfT => {
 	return {
 		type: FBTypes.IF,
 		id,
@@ -88,7 +88,7 @@ export const createIf = (booleanExpression: string, id: number, depth: number): 
 		canHaveChildren: true,
 		children: [],
 		booleanExpression,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "if " + booleanExpression + ":\n";
 			if (children.length > 0) {
 				for (let child of children) {
@@ -102,7 +102,7 @@ export const createIf = (booleanExpression: string, id: number, depth: number): 
 	}
 }
 
-export const createWhile = (booleanExpression: string, id: number, depth: number): FBWhile => {
+export const createWhile = (booleanExpression: string, id: number, depth: number): FBWhileT => {
 	return {
 		type: FBTypes.WHILE,
 		id,
@@ -110,7 +110,7 @@ export const createWhile = (booleanExpression: string, id: number, depth: number
 		canHaveChildren: true,
 		children: [],
 		booleanExpression,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "while " + booleanExpression + ":\n";
 			if (children.length > 0) {
 				for (let child of children) {
@@ -124,7 +124,7 @@ export const createWhile = (booleanExpression: string, id: number, depth: number
 	}
 }
 
-export const createFor = (iterator: string, collection: string, id: number, depth: number): FBFor => {
+export const createFor = (iterator: string, collection: string, id: number, depth: number): FBForT => {
 	return {
 		type: FBTypes.FOR,
 		id,
@@ -133,7 +133,7 @@ export const createFor = (iterator: string, collection: string, id: number, dept
 		children: [],
 		iterator,
 		collection,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "for " + iterator + " in " + collection + ":\n";
 			if (children.length > 0) {
 				for (let child of children) {
@@ -147,7 +147,7 @@ export const createFor = (iterator: string, collection: string, id: number, dept
 	}
 }
 
-export const createAssignment = (variable: string, value: string, id: number, depth: number): FBAssignment => {
+export const createAssignment = (variable: string, value: string, id: number, depth: number): FBAssignmentT => {
 	return {
 		type: FBTypes.ASSIGNMENT,
 		id,
@@ -156,13 +156,13 @@ export const createAssignment = (variable: string, value: string, id: number, de
 		children: [],
 		variable,
 		value,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			return variable + " = " + value;
 		}
 	}
 }
 
-export const createComment = (text: string, id: number, depth: number): FBComment => {
+export const createComment = (text: string, id: number, depth: number): FBCommentT => {
 	return {
 		type: FBTypes.COMMENT,
 		id,
@@ -170,13 +170,13 @@ export const createComment = (text: string, id: number, depth: number): FBCommen
 		canHaveChildren: false,
 		children: [],
 		text,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			return text;
 		}
 	}
 }
 
-export const createFunctionDefinition = (name: string, parameters: string[], id: number, depth: number): FBFunctionDefinition => {
+export const createFunctionDefinition = (name: string, parameters: string[], id: number, depth: number): FBFunctionDefinitionT => {
 	return {
 		type: FBTypes.FUNCTION_DEFINITION,
 		id,
@@ -185,7 +185,7 @@ export const createFunctionDefinition = (name: string, parameters: string[], id:
 		children: [],
 		name,
 		parameters,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "def " + name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
@@ -206,7 +206,7 @@ export const createFunctionDefinition = (name: string, parameters: string[], id:
 	}
 }
 
-export const createFunctionCall = (name: string, parameters: string[], id: number, depth: number): FBFunctionCall => {
+export const createFunctionCall = (name: string, parameters: string[], id: number, depth: number): FBFunctionCallT => {
 	return {
 		type: FBTypes.FUNCTION_CALL,
 		id,
@@ -215,7 +215,7 @@ export const createFunctionCall = (name: string, parameters: string[], id: numbe
 		children: [],
 		name,
 		parameters,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
@@ -229,7 +229,7 @@ export const createFunctionCall = (name: string, parameters: string[], id: numbe
 	}
 }
 
-export const createClassDefinition = (name: string, parameters: string[], id: number, depth: number): FBClassDefinition => {
+export const createClassDefinition = (name: string, parameters: string[], id: number, depth: number): FBClassDefinitionT => {
 	return {
 		type: FBTypes.CLASS_DEFINITION,
 		id,
@@ -238,7 +238,7 @@ export const createClassDefinition = (name: string, parameters: string[], id: nu
 		children: [],
 		name,
 		parameters,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "class " + name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
@@ -259,7 +259,7 @@ export const createClassDefinition = (name: string, parameters: string[], id: nu
 	}
 }
 
-export const createExpression = (text: string, id: number, depth: number): FBExpression => {
+export const createExpression = (text: string, id: number, depth: number): FBExpressionT => {
 	return {
 		type: FBTypes.EXPRESSION,
 		id,
@@ -267,13 +267,13 @@ export const createExpression = (text: string, id: number, depth: number): FBExp
 		canHaveChildren: false,
 		children: [],
 		text,
-		extractTextualPython: (children: FBFrame[]) => {
+		extractTextualPython: (children: FBFrameT[]) => {
 			return text;
 		}
 	}
 }
 
-export const addAllChildrenToFrame = (frame: FBFrame, children: FBFrame[]) : boolean => {
+export const addAllChildrenToFrame = (frame: FBFrameT, children: FBFrameT[]) : boolean => {
 	if (!frame.canHaveChildren) {
 		return false;
 	}
@@ -282,7 +282,7 @@ export const addAllChildrenToFrame = (frame: FBFrame, children: FBFrame[]) : boo
 	return true;
 }
 
-export const addChildToFrame = (frame: FBFrame, child: FBFrame) : boolean => {
+export const addChildToFrame = (frame: FBFrameT, child: FBFrameT) : boolean => {
 	if (!frame.canHaveChildren) {
 		return false;
 	}
@@ -348,7 +348,7 @@ export const addChildToFrame = (frame: FBFrame, child: FBFrame) : boolean => {
 // 	return true;
 // }
 
-export const deleteFrame = (frame: FBFrame, id: number) : boolean => {
+export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
 	let deleted = false;
 	while (deleted === false) {
 		for (let i = 0; i < frame.children.length; i++) {
@@ -370,7 +370,7 @@ export const deleteFrame = (frame: FBFrame, id: number) : boolean => {
 
 // TODO: might need to add switch statement for different types of frames
 // so that we can validate the input
-export const editFrame = (baseFrame: FBFrame, newFrame: FBFrame) : boolean => {
+export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => {
 	let edited = false;
 	while (edited === false) {
 		for (let i = 0; i < baseFrame.children.length; i++) {
@@ -390,10 +390,10 @@ export const editFrame = (baseFrame: FBFrame, newFrame: FBFrame) : boolean => {
 }
 
 export interface FBEditor {
-	baseFrame: FBFrame;
+	baseFrame: FBFrameT;
 	focusedFrameId: number;
-	createNewFrame: Action<FBEditor, FBFrame>;
-	editFrame: Action<FBEditor, FBFrame>;
+	createNewFrame: Action<FBEditor, FBFrameT>;
+	editFrame: Action<FBEditor, FBFrameT>;
 	deleteFrame: Action<FBEditor, number>;
 	setFocusedFrameId: Action<FBEditor, number>;
 }

@@ -17,6 +17,9 @@ import { equalILoadSaveStatus } from "../model/project";
 import { LinkedContentBar } from "./LinkedContentBar";
 import { useFlatCodeText } from "./hooks/code-text";
 
+import FBEditor from "./frame-based-editor/FBEditor";
+import { FBFrameT, FBIfT, FBTypes } from "../model/frame-based";
+
 const ReadOnlyOverlay = () => {
   const syncState = useStoreState(
     (state) => state.activeProject.syncState,
@@ -28,8 +31,8 @@ const ReadOnlyOverlay = () => {
     syncState.loadState === "pending"
       ? "Loading..."
       : syncState.saveState === "pending"
-      ? "Saving..."
-      : null;
+        ? "Saving..."
+        : null;
 
   if (maybeMessage != null) {
     return (
@@ -135,6 +138,53 @@ const CodeAceEditor = () => {
   );
 };
 
+// const CodeEditor = () => {
+//   return (
+//     <div className="CodeEditor">
+//       <LinkedContentBar />
+//       <div className="editor-itself">
+//         <div className="help-sidebar">
+//           <HelpSidebar />
+//           <HelpSidebarOpenControl />
+//         </div>
+//         <CodeAceEditor />
+//       </div>
+//     </div>
+//   );
+// };
+
+const mockFrames = [
+  {
+    type: FBTypes.IF,
+    id: 1,
+    depth: 1,
+    canHaveChildren: true,
+    extractTextualPython: (children: FBFrameT[]) => "",
+    booleanExpression: "true",
+    children: [
+      {
+        type: FBTypes.IF,
+        id: 2,
+        depth: 2,
+        canHaveChildren: true,
+        extractTextualPython: (children: FBFrameT[]) => "",
+        booleanExpression: "false",
+        children: [
+          {
+            type: FBTypes.IF,
+            id: 3,
+            depth: 3,
+            canHaveChildren: true,
+            extractTextualPython: (children: FBFrameT[]) => "",
+            booleanExpression: "false",
+            children: []
+          }
+        ]
+      }
+    ]
+  }
+]
+
 const CodeEditor = () => {
   return (
     <div className="CodeEditor">
@@ -144,10 +194,11 @@ const CodeEditor = () => {
           <HelpSidebar />
           <HelpSidebarOpenControl />
         </div>
-        <CodeAceEditor />
+        <FBEditor frames={mockFrames} />
       </div>
     </div>
   );
-};
+}
+
 
 export default CodeEditor;
