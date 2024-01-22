@@ -194,7 +194,7 @@ const CodeEditor = () => {
           <HelpSidebar />
           <HelpSidebarOpenControl />
         </div>
-        <FBEditor frames={mockFrames} />
+        <FBEditor />
       </div>
     </div>
   );

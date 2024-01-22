@@ -80,13 +80,13 @@ const creatNOP = (id: number, depth: number): FBNOPT => {
 	}
 }
 
-export const createIf = (booleanExpression: string, id: number, depth: number): FBIfT => {
+export const createIf = (booleanExpression: string, id: number, depth: number, children: FBFrameT[]): FBIfT => {
 	return {
 		type: FBTypes.IF,
 		id,
 		depth,
 		canHaveChildren: true,
-		children: [],
+		children: children,
 		booleanExpression,
 		extractTextualPython: (children: FBFrameT[]) => {
 			let result = "if " + booleanExpression + ":\n";
@@ -349,8 +349,11 @@ export const addChildToFrame = (frame: FBFrameT, child: FBFrameT) : boolean => {
 // }
 
 export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
+	// delete the frame with ID from the tree
+	// return true if successful, false otherwise
 	let deleted = false;
-	while (deleted === false) {
+	while (true)
+	{
 		for (let i = 0; i < frame.children.length; i++) {
 			if (frame.children[i].id === id) {
 				frame.children.splice(i, 1);
@@ -363,8 +366,8 @@ export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
 				}
 			}
 		}
+		break;
 	}
-
 	return deleted;
 }
 
@@ -389,6 +392,76 @@ export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => 
 	return edited;
 }
 
+import { debug } from 'easy-peasy';
+
+const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
+	if (baseFrame.id === id) {
+		return baseFrame;
+	}
+
+	for (let child of baseFrame.children) {
+		const result = findFrame(child, id);
+		if (result !== null) {
+			return result;
+		}
+	}
+
+	return null;
+}
+
+const moveFrame = (baseFrame: FBFrameT, id: number, index: number, newParentId: number) : boolean => {
+	const parentFrame = findFrame(baseFrame, newParentId);
+	
+	if (parentFrame === null) {
+		return false;
+	}
+
+	const frame = findFrame(baseFrame, id);
+	if (frame === null) {
+		return false;
+	}
+
+	console.log('CHECK 1');
+	
+
+	const newDepth = parentFrame.depth + 1;
+
+	// remove frame from old parent
+	deleteFrame(baseFrame, id);
+
+	console.log('CHECK 2');
+	
+
+	// add frame to new parent at given index if the length is greather than 1
+	if (parentFrame.children.length > 0) {
+		parentFrame.children.splice(index, 0, frame);
+	} else {
+		parentFrame.children.push(frame);
+	}
+
+	// update depth of frame and all children
+	frame.depth = newDepth;
+
+	// update depth of children
+	const updateDepth = (frame: FBFrameT) => {
+		frame.depth = newDepth + 1;
+		for (let child of frame.children) {
+			updateDepth(child);
+		}
+	}
+
+	for (let child of frame.children) {
+		updateDepth(child);
+	}
+
+	console.log('after move');
+	
+	console.log(debug(baseFrame));
+	
+
+	return true;
+}
+
 export interface FBEditor {
 	baseFrame: FBFrameT;
 	focusedFrameId: number;
@@ -396,13 +469,15 @@ export interface FBEditor {
 	editFrame: Action<FBEditor, FBFrameT>;
 	deleteFrame: Action<FBEditor, number>;
 	setFocusedFrameId: Action<FBEditor, number>;
+	moveFrame: Action<FBEditor, {id: number, index: number, newParentId: number}>;
 }
 
-// might need to change how the editing works above. 
-// Currently, it's based on editing through reference, 
-// but that might not work with easy-peasy
 export const frameBasedEditor: FBEditor = {
-	baseFrame: creatNOP(-1, -1),
+	baseFrame: createIf("true", 0, 0, [
+		createIf('1', 1, 1, 
+			[createIf('1.1', 2, 2, [])]),
+		createIf('2', 3, 1, 
+			[createIf('2.1', 4, 2, [])])]),
 	focusedFrameId: 0,
 	createNewFrame: action((state, frame) => {
 		addChildToFrame(state.baseFrame, frame);
@@ -416,4 +491,7 @@ export const frameBasedEditor: FBEditor = {
 	setFocusedFrameId: action((state, id) => {
 		state.focusedFrameId = id;
 	}),
+	moveFrame: action((state, {id, index, newParentId}) => {		
+		moveFrame(state.baseFrame, id, index, newParentId);
+	})
 }

@@ -2,27 +2,28 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { FBFrameT } from "../../model/frame-based";
+import { useStoreActions, useStoreState } from '../../store';
 import Frame from "./Frame";
 
-type FBEditorProps = {
-  frames: FBFrameT[];
-};
+const FBEditor: React.FC = () => {
+  const { baseFrame } = useStoreState((state) => state.frameBasedEditor);
+  const { moveFrame } = useStoreActions((actions) => actions.frameBasedEditor);
 
-const FBEditor: React.FC<FBEditorProps> = (props) => {
-  const moveFrame = (dragIndex: number, hoverIndex: number) => {
-    // Implement your logic to update the state with the new parent and order of frames
-    // You might want to use the same global state mechanism you mentioned
+  const moveFrameToNewParent = (frameId: number, index: number, newParentId: number) => {
+    console.log(`Moving frame ${frameId} to new parent ${newParentId}`);
+
+    moveFrame({ id: frameId, index, newParentId });
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="frames-container">
-        {props.frames.map((frame: FBFrameT, index: number) => (
+        {baseFrame.children.map((frame: FBFrameT, index: number) => (
           <Frame
             key={frame.id}
             frame={frame}
             index={index}
-            moveFrame={moveFrame}
+            moveFrame={moveFrameToNewParent}
             parentID={0} // Set the initial parent ID
           />
         ))}
