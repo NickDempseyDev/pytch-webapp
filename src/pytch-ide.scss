@@ -1172,22 +1172,63 @@ ul.ClipArtTagButtonCollection {
 
 .frames-container {
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
   gap: 0.5rem;
+  background-color: #000;
 }
 
 .frame {
-  background-color: #ff0000;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  padding: 0.2em;
+  border-radius: 0.2em;
+  font-weight: 600;
 }
 
 .child-frame {
-  background-color: #00ff00;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding-left: 2rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  // margin-bottom: 1rem;
+}
+
+.drop-zone {
+  background-color: transparent;
+  width: 100%;
+  height: 20px;
+}
+
+.drop-zone-active {
+  background-color: #1eff00;
+  border-radius: 2rem;
+}
+
+.dep-1 {
+  background-color: #7a7aff;
+}
+
+.dep-2 {
+  background-color: #ffffb0;
+}
+
+.dep-3 {
+  background-color: #00ffff;
+}
+
+.dep-4 {
+  background-color: #ff00ff;
+}
+
+.dep-5 {
+  background-color: #ff8000;
+}
+
+.dep-6 {
+  background-color: #ff0080;
 }
 

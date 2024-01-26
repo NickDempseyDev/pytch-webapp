@@ -153,38 +153,6 @@ const CodeAceEditor = () => {
 //   );
 // };
 
-const mockFrames = [
-  {
-    type: FBTypes.IF,
-    id: 1,
-    depth: 1,
-    canHaveChildren: true,
-    extractTextualPython: (children: FBFrameT[]) => "",
-    booleanExpression: "true",
-    children: [
-      {
-        type: FBTypes.IF,
-        id: 2,
-        depth: 2,
-        canHaveChildren: true,
-        extractTextualPython: (children: FBFrameT[]) => "",
-        booleanExpression: "false",
-        children: [
-          {
-            type: FBTypes.IF,
-            id: 3,
-            depth: 3,
-            canHaveChildren: true,
-            extractTextualPython: (children: FBFrameT[]) => "",
-            booleanExpression: "false",
-            children: []
-          }
-        ]
-      }
-    ]
-  }
-]
-
 const CodeEditor = () => {
   return (
     <div className="CodeEditor">

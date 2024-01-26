@@ -421,28 +421,21 @@ const moveFrame = (baseFrame: FBFrameT, id: number, index: number, newParentId: 
 		return false;
 	}
 
-	console.log('CHECK 1');
-	
-
 	const newDepth = parentFrame.depth + 1;
 
-	// remove frame from old parent
 	deleteFrame(baseFrame, id);
 
-	console.log('CHECK 2');
-	
-
 	// add frame to new parent at given index if the length is greather than 1
+	console.log('INDEX IS: ', index);
+	
 	if (parentFrame.children.length > 0) {
 		parentFrame.children.splice(index, 0, frame);
 	} else {
 		parentFrame.children.push(frame);
 	}
 
-	// update depth of frame and all children
 	frame.depth = newDepth;
 
-	// update depth of children
 	const updateDepth = (frame: FBFrameT) => {
 		frame.depth = newDepth + 1;
 		for (let child of frame.children) {
@@ -454,13 +447,14 @@ const moveFrame = (baseFrame: FBFrameT, id: number, index: number, newParentId: 
 		updateDepth(child);
 	}
 
-	console.log('after move');
-	
-	console.log(debug(baseFrame));
-	
-
 	return true;
 }
+
+export type MoveCandidatesType = {
+	toId: number;
+	toIndex: number;
+	toDepth: number;
+  };
 
 export interface FBEditor {
 	baseFrame: FBFrameT;

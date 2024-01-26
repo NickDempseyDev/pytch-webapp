@@ -3,6 +3,7 @@ import { useDrag, useDrop } from 'react-dnd';
 import { FBFrameT, FBTypes } from "../../model/frame-based";
 import FBIf from "./frames/FBIf";
 import { FBIfT } from '../../model/frame-based';
+import DropZone from './DropZone';
 
 type FrameProps = {
   frame: FBFrameT;
@@ -15,28 +16,6 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, index, parentID }) => {
   const [, drag] = useDrag({
     type: 'FRAME',
     item: { id: frame.id, index, parentID },
-  });
-
-  const [, drop] = useDrop({
-    accept: 'FRAME',
-    drop: (item: { id: number; index: number; parentID: number } | null) => {
-      if (!item) {
-        console.log('NO CHANGE');
-
-        return;
-      }
-
-      if (item.id === frame.id || item.parentID === frame.id) {
-        console.log('NO CHANGE');
-
-        return;
-      }
-      console.log('CHANGE PARENT');
-      console.log('FROM ', item.parentID);
-      console.log('TO ', frame.id);
-
-      moveFrame(item.id, item.index, frame.id);
-    },
   });
 
 
@@ -52,30 +31,45 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, index, parentID }) => {
       [FBTypes.FUNCTION_CALL]: <div></div>,
       [FBTypes.FUNCTION_DEFINITION]: <div></div>,
       [FBTypes.NOP]: <div></div>
-      // Add other frame types here
     };
 
     return frameComponents[frame.type];
   };
 
   const renderChildren = (frame: FBFrameT) => {
-    return frame.children.map((child: FBFrameT, childIndex: number) => {
-      return (
-        <Frame
-          key={child.id}
-          frame={child}
-          moveFrame={moveFrame}
-          index={childIndex}
-          parentID={frame.id}
-        />
-      );
-    });
+    return <>
+      {frame.children.map((child: FBFrameT, childIndex: number) => {
+        return (
+          <>
+            <DropZone
+              key={child.id + 'dropzone'}
+              parentId={frame.id}
+              index={childIndex}
+              moveFrame={moveFrame}
+            />
+            <Frame
+              key={child.id + 'frame'}
+              frame={child}
+              moveFrame={moveFrame}
+              index={childIndex}
+              parentID={frame.id}
+            />
+          </>
+        );
+      })}
+      <DropZone
+        key={frame.id + 'dropzone'}
+        parentId={frame.id}
+        index={frame.children.length}
+        moveFrame={moveFrame}
+      />
+    </>
   };
 
   return (
-    <div ref={(node) => drag(drop(node))} className="frame">
+    <div ref={drag} className={`frame dep-${frame.depth}`}>
       {getCorrectFrameComponent(frame)}
-      <div className="child-frame">
+      <div className={`child-frame`}>
         {renderChildren(frame)}
       </div>
     </div>
