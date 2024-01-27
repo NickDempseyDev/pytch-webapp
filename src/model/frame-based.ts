@@ -124,13 +124,13 @@ export const createWhile = (booleanExpression: string, id: number, depth: number
 	}
 }
 
-export const createFor = (iterator: string, collection: string, id: number, depth: number): FBForT => {
+export const createFor = (iterator: string, collection: string, id: number, depth: number, children: FBFrameT[]): FBForT => {
 	return {
 		type: FBTypes.FOR,
 		id,
 		depth,
 		canHaveChildren: true,
-		children: [],
+		children: children,
 		iterator,
 		collection,
 		extractTextualPython: (children: FBFrameT[]) => {
@@ -392,8 +392,6 @@ export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => 
 	return edited;
 }
 
-import { debug } from 'easy-peasy';
-
 const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
 	if (baseFrame.id === id) {
 		return baseFrame;
@@ -474,10 +472,20 @@ const createNestedIfsRecursive = (currentDepth: number, maxDepth: number, nextId
 	return createIf('true', currentDepth, currentDepth, [createNestedIfsRecursive(currentDepth + 1, maxDepth, nextId +1)]);
 }
 
+const assignIdsAndDepthRecursive = (frame: FBFrameT, nextId: number, depth: number): number => {
+	frame.id = nextId;
+	frame.depth = depth;
+	nextId++;
+	for (let child of frame.children) {
+		nextId = assignIdsAndDepthRecursive(child, nextId, depth + 1);
+	}
+	return nextId;
+}
+
 export const frameBasedEditor: FBEditor = {
 	baseFrame: createIf("true", 0, 0, [
 		createIf('1', 1, 1, 
-			[createIf('1.1', 2, 2, [])]),
+			[createFunctionDefinition('test', ['a', 'b'], 2, 2)]),
 		createIf('2', 3, 1, 
 			[createIf('2.1', 4, 2, [])])]),
 	focusedFrameId: 0,

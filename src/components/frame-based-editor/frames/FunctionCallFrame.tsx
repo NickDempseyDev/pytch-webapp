@@ -1,8 +1,26 @@
-import { FBFunctionCall } from '../../../model/frame-based'
+import { FBFunctionCallT } from '../../../model/frame-based'
 
-const FunctionCallFrame = (props: {frame: FBFunctionCall}) => {
+type FunctionCallFrameProps = {
+  frame: FBFunctionCallT
+}
+
+const getParameters = (parameters: string[]) => {
+  let result = '';
+
+  for (let i = 0; i < parameters.length; i++) {
+    result += parameters[i];
+
+    if (i !== parameters.length - 1) {
+      result += ', ';
+    }
+  }
+
+  return result;
+}
+
+const FunctionCallFrame = ({ frame }: FunctionCallFrameProps) => {
   return (
-	<div>FunctionCallFrame</div>
+    <div><input type="text" value={frame.name} />({getParameters(frame.parameters)})</div>
   )
 }
 

@@ -1,8 +1,12 @@
-import { FBComment } from '../../../model/frame-based'
+import { FBCommentT } from '../../../model/frame-based'
 
-const CommentFrame = (props: {frame: FBComment}) => {
+type CommentFrameProps = {
+  frame: FBCommentT
+}
+
+const CommentFrame = ({ frame }: CommentFrameProps) => {
   return (
-	<div>CommentFrame</div>
+    <div># <input type="text" value={frame.text} /></div>
   )
 }
 

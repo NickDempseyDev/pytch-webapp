@@ -1,8 +1,22 @@
-import { FBClassDefinition } from '../../../model/frame-based'
+import React from 'react';
+import { FBClassDefinitionT } from '../../../model/frame-based'
 
-const ClassDefinitionFrame = (props: {frame: FBClassDefinition}) => {
+type ClassDefinitionFrameProps = {
+  frame: FBClassDefinitionT
+}
+
+const mapParametersToInputFields = (parameters: string[]) => {
+  return parameters.map((parameter, index) => (
+    <React.Fragment key={index + '_param'}>
+      <input type="text" value={parameter} />
+      {index < parameters.length - 1 && <span>, </span>}
+    </React.Fragment>
+  ));
+};
+
+const ClassDefinitionFrame = ({ frame }: ClassDefinitionFrameProps) => {
   return (
-	<div>ClassDefinitionFrame</div>
+    <div>def <input type="text" value={frame.name} />({mapParametersToInputFields(frame.parameters)}):</div>
   )
 }
 

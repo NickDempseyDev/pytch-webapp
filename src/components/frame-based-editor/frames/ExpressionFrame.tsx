@@ -1,8 +1,12 @@
-import { FBExpression } from '../../../model/frame-based'
+import { FBExpressionT } from '../../../model/frame-based'
 
-const ExpressionFrame = (props: {frame: FBExpression}) => {
+type ExpressionFrameProps = {
+  frame: FBExpressionT
+}
+
+const ExpressionFrame = ({ frame }: ExpressionFrameProps) => {
   return (
-	<div>ExpressionFrame</div>
+    <div><input type="text" value={frame.text} /></div>
   )
 }
 

@@ -1,8 +1,12 @@
-import { FBAssignment } from '../../../model/frame-based'
+import { FBAssignmentT } from '../../../model/frame-based'
 
-const AssignmentFrame = (props: {frame: FBAssignment}) => {
+type AssignmentFrameProps = {
+  frame: FBAssignmentT;
+}
+
+const AssignmentFrame = ({ frame }: AssignmentFrameProps) => {
   return (
-	<div>AssignmentFrame</div>
+    <div><input type="text" value={frame.variable} /> = <input type="text" value={frame.value} /></div>
   )
 }
 

@@ -1,8 +1,12 @@
-import { FBWhile } from '../../../model/frame-based'
+import { FBWhileT } from '../../../model/frame-based'
 
-const WhileFrame = (props: {frame: FBWhile}) => {
+type WhileFrameProps = {
+  frame: FBWhileT
+}
+
+const WhileFrame = ({ frame }: WhileFrameProps) => {
   return (
-	<div>WhileFrame</div>
+    <div>while <input type="text" value={frame.booleanExpression} />:</div>
   )
 }
 

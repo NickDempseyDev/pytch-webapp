@@ -1,8 +1,12 @@
-import { FBFor } from '../../../model/frame-based'
+import { FBForT } from '../../../model/frame-based'
 
-const ForFrame = (props: {frame: FBFor}) => {
+type ForFrameProps = {
+  frame: FBForT
+}
+
+const ForFrame = ({ frame }: ForFrameProps) => {
   return (
-	<div>ForFrame</div>
+    <div>for <input type="text" value={frame.iterator} /> in <input type="text" value={frame.collection} />:</div>
   )
 }
 
