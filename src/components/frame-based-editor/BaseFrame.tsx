@@ -2,16 +2,19 @@ import React from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrop, useDrag } from 'react-dnd';
-import { FBFrameT } from "../../model/frame-based";
+import { DropZoneCoordinate, FBFrameT } from "../../model/frame-based";
 import Frame from "./Frame";
 import DropZone from './DropZone';
 
 type BaseFrameProps = {
 	baseFrame: FBFrameT;
 	moveFrame: (id: number, index: number, newParentId: number) => void;
+	editFrame: (frame: FBFrameT) => void;
+	applyFocus: (coords: DropZoneCoordinate) => void;
+	focusedDropZoneCoords: DropZoneCoordinate;
 }
 
-const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame }) => {
+const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame, editFrame, applyFocus, focusedDropZoneCoords }) => {
 	const [, drag] = useDrag({
 		type: 'OTHER',
 		item: { id: 0 },
@@ -42,13 +45,18 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame }) => {
 						parentId={0}
 						index={index}
 						moveFrame={moveFrame}
+						applyFocus={applyFocus}
+						focusedDropZoneCoords={focusedDropZoneCoords}
 					/>
 					<Frame
 						key={frame.id + 'frame'}
 						frame={frame}
 						index={index}
 						moveFrame={moveFrame}
+						editFrame={editFrame}
 						parentID={0} // Set the initial parent ID
+						applyFocus={applyFocus}
+						focusedDropZoneCoords={focusedDropZoneCoords}
 					/>
 				</>
 			))}
@@ -57,6 +65,8 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame }) => {
 				parentId={0}
 				index={baseFrame.children.length}
 				moveFrame={moveFrame}
+				applyFocus={applyFocus}
+				focusedDropZoneCoords={focusedDropZoneCoords}
 			/>
 		</div>
 	)

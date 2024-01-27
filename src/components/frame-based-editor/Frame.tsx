@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd';
-import { FBFrameT, FBTypes, FBWhileT, FBForT, FBAssignmentT, FBClassDefinitionT, FBCommentT, FBExpressionT, FBFunctionCallT, FBFunctionDefinitionT } from "../../model/frame-based";
+import { FBFrameT, FBTypes, FBWhileT, FBForT, FBAssignmentT, FBClassDefinitionT, FBCommentT, FBExpressionT, FBFunctionCallT, FBFunctionDefinitionT, DropZoneCoordinate } from "../../model/frame-based";
 import IfFrame from './frames/IfFrame';
 import { FBIfT } from '../../model/frame-based';
 import DropZone from './DropZone';
@@ -16,11 +16,14 @@ import FunctionDefinitionFrame from './frames/FunctionDefinitionFrame';
 type FrameProps = {
   frame: FBFrameT;
   moveFrame: (id: number, index: number, newParentId: number) => void;
+  editFrame: (frame: FBFrameT) => void;
   index: number;
   parentID: number;
+  applyFocus: (coords: DropZoneCoordinate) => void;
+  focusedDropZoneCoords: DropZoneCoordinate;
 };
 
-const Frame: React.FC<FrameProps> = ({ frame, moveFrame, index, parentID }) => {
+const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, parentID, applyFocus, focusedDropZoneCoords }) => {
   const [, drag] = useDrag({
     type: 'FRAME',
     item: { id: frame.id, index, parentID },
@@ -54,13 +57,18 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, index, parentID }) => {
               parentId={frame.id}
               index={childIndex}
               moveFrame={moveFrame}
+              applyFocus={applyFocus}
+              focusedDropZoneCoords={focusedDropZoneCoords}
             />
             <Frame
               key={child.id + 'frame'}
               frame={child}
               moveFrame={moveFrame}
+              editFrame={editFrame}
               index={childIndex}
               parentID={frame.id}
+              applyFocus={applyFocus}
+              focusedDropZoneCoords={focusedDropZoneCoords}
             />
           </>
         );
@@ -70,6 +78,8 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, index, parentID }) => {
         parentId={frame.id}
         index={frame.children.length}
         moveFrame={moveFrame}
+        applyFocus={applyFocus}
+        focusedDropZoneCoords={focusedDropZoneCoords}
       />
     </>
   };

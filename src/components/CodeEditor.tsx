@@ -82,6 +82,8 @@ const CodeAceEditor = () => {
       exec: async () => {
         await aceController?.copySelectionAsHtml();
       },
+
+
     });
 
     // It seems common to have not ever heard of "overwrite" mode.  If
@@ -153,9 +155,13 @@ const CodeAceEditor = () => {
 //   );
 // };
 
+const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  console.log(e.key);
+}
+
 const CodeEditor = () => {
   return (
-    <div className="CodeEditor">
+    <div onKeyDown={(e) => onKeyPress} className="CodeEditor">
       <LinkedContentBar />
       <div className="editor-itself">
         <div className="help-sidebar">

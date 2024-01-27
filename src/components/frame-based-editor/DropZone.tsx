@@ -1,14 +1,17 @@
 import React from 'react'
 import { useDrop } from 'react-dnd';
+import { DropZoneCoordinate } from '../../model/frame-based';
 
 
 type DropZoneProps = {
 	parentId: number;
 	index: number;
 	moveFrame: (id: number, index: number, newParentId: number) => void;
+	applyFocus: (coords: DropZoneCoordinate) => void;
+	focusedDropZoneCoords: DropZoneCoordinate;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ index, parentId, moveFrame }) => {
+const DropZone: React.FC<DropZoneProps> = ({ index, parentId, moveFrame, applyFocus, focusedDropZoneCoords }) => {
 	const [{ isActive }, drop] = useDrop({
 		accept: 'FRAME',
 		drop: (item: { id: number; index: number; parentID: number } | null) => {
@@ -20,6 +23,7 @@ const DropZone: React.FC<DropZoneProps> = ({ index, parentId, moveFrame }) => {
 				return;
 			}
 
+			applyFocus({ frameId: parentId, index: index + 1 });
 			moveFrame(item.id, index, parentId);
 		},
 		collect(monitor) {
@@ -40,8 +44,22 @@ const DropZone: React.FC<DropZoneProps> = ({ index, parentId, moveFrame }) => {
 		// }
 	});
 
+	const correctClassName = () => {
+		let name = '';
+
+		if (focusedDropZoneCoords && focusedDropZoneCoords.frameId === parentId && focusedDropZoneCoords.index === index) {
+			name = 'drop-zone-active';
+		}
+
+		if (isActive) {
+			name = 'drop-zone-hover';
+		}
+
+		return name;
+	}
+
 	return (
-		<div ref={drop} className={`drop-zone ${isActive ? 'drop-zone-active' : ''}`}></div>
+		<div ref={drop} className={`drop-zone ${correctClassName()}`}></div>
 	)
 }
 
