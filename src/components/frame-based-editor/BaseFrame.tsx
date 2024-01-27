@@ -4,6 +4,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrop, useDrag } from 'react-dnd';
 import { FBFrameT } from "../../model/frame-based";
 import Frame from "./Frame";
+import DropZone from './DropZone';
 
 type BaseFrameProps = {
 	baseFrame: FBFrameT;
@@ -35,14 +36,28 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame }) => {
 	return (
 		<div className="frames-container">
 			{baseFrame.children.map((frame: FBFrameT, index: number) => (
-				<Frame
-					key={frame.id}
-					frame={frame}
-					index={index}
-					moveFrame={moveFrame}
-					parentID={0} // Set the initial parent ID
-				/>
+				<>
+					<DropZone
+						key={frame.id + 'dropzone'}
+						parentId={0}
+						index={index}
+						moveFrame={moveFrame}
+					/>
+					<Frame
+						key={frame.id + 'frame'}
+						frame={frame}
+						index={index}
+						moveFrame={moveFrame}
+						parentID={0} // Set the initial parent ID
+					/>
+				</>
 			))}
+			<DropZone
+				key={'00' + 'dropzone'}
+				parentId={0}
+				index={baseFrame.children.length}
+				moveFrame={moveFrame}
+			/>
 		</div>
 	)
 }

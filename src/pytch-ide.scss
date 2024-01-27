@@ -1192,15 +1192,15 @@ ul.ClipArtTagButtonCollection {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
   // margin-bottom: 1rem;
 }
 
 .drop-zone {
   background-color: transparent;
   width: 100%;
-  height: 20px;
+  height: 10px;
 }
 
 .drop-zone-active {
@@ -1209,7 +1209,7 @@ ul.ClipArtTagButtonCollection {
 }
 
 .dep-1 {
-  background-color: #7a7aff;
+  background-color: #9c9cff;
 }
 
 .dep-2 {
@@ -1221,14 +1221,14 @@ ul.ClipArtTagButtonCollection {
 }
 
 .dep-4 {
-  background-color: #ff00ff;
+  background-color: #ff8aff;
 }
 
 .dep-5 {
-  background-color: #ff8000;
+  background-color: #ffc285;
 }
 
 .dep-6 {
-  background-color: #ff0080;
+  background-color: #ff91c8;
 }
 

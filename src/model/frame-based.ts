@@ -466,6 +466,14 @@ export interface FBEditor {
 	moveFrame: Action<FBEditor, {id: number, index: number, newParentId: number}>;
 }
 
+const createNestedIfsRecursive = (currentDepth: number, maxDepth: number, nextId: number): FBFrameT => {
+	if (currentDepth === maxDepth) {
+		return createIf('true', nextId, currentDepth, []);
+	}
+
+	return createIf('true', currentDepth, currentDepth, [createNestedIfsRecursive(currentDepth + 1, maxDepth, nextId +1)]);
+}
+
 export const frameBasedEditor: FBEditor = {
 	baseFrame: createIf("true", 0, 0, [
 		createIf('1', 1, 1, 
