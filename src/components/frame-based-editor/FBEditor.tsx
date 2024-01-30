@@ -26,11 +26,15 @@ const FBEditor: React.FC = () => {
       switch (e.key) {
         case "ArrowUp":
           const newCoords = getNextCoordUp(baseFrame, focusedDropZoneCoords);
-          console.log("ArrowUp", newCoords);
+          if (newCoords) {
+            applyFocus(newCoords);
+          }
           break;
         case "ArrowDown":
           const newCoordsDown = getNextCoordDown(baseFrame, focusedDropZoneCoords);
-          console.log("ArrowDown", newCoordsDown);
+          if (newCoordsDown) {
+            applyFocus(newCoordsDown);
+          }
           break;
         default:
           break;
@@ -40,7 +44,7 @@ const FBEditor: React.FC = () => {
     return () => {
       window.removeEventListener("keydown", (e) => { });
     }
-  });
+  }, []);
 
   return (
     <DndProvider backend={HTML5Backend}>

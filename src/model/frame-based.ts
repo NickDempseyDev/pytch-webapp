@@ -1,4 +1,5 @@
 import { action, Action } from "easy-peasy";
+import { notInitialized } from "react-redux/es/utils/useSyncExternalStore";
 
 export enum FBTypes {
 	NOP,
@@ -498,57 +499,58 @@ const assignIdsAndDepthRecursive = (frame: FBFrameT, nextId: number, depth: numb
 	return nextId;
 }
 
-export const getNextCoordUp = (baseFrame: FBFrameT, currentCoord: DropZoneCoordinate): DropZoneCoordinate | null => {
-	const frame = findFrame(baseFrame, currentCoord.frameId);
-	if (frame === null) {
-		return null;
-	}
-
-	if (frame.depth === 0) {
-		return null;
-	}
-
-	const parentFrame = findFrameParent(baseFrame, currentCoord.frameId);
-	if (parentFrame === null) {
-		return null;
-	}
-
-	const parentIndex = parentFrame.children.indexOf(frame);
-
-	if (parentIndex === 0) {
-		return { frameId: parentFrame.id, index: parentIndex };
-	}
-
-	return { frameId: parentFrame.id, index: parentIndex - 1 };
-}
-
-export const getNextCoordDown = (baseFrame: FBFrameT, currentCoord: DropZoneCoordinate): DropZoneCoordinate | null | undefined => {
-	const frame = findFrame(baseFrame, currentCoord.frameId);
-	console.log('FRAME IS: ', frame);
-	
-	if (frame === null) {
-		return null;
-	}
-
-	if (frame.depth === 0) {
-		return null;
-	}
-
-	const parentFrame = findFrameParent(baseFrame, currentCoord.frameId);
-	if (parentFrame === null) {
-		return null;
-	}
-
-	const parentIndex = parentFrame.children.indexOf(frame);
-
-	console.log('PARENT INDEX IS: ', parentIndex);
-	
-
-}
-
 export type DropZoneCoordinate = {
 	frameId: number;
 	index: number;
+}
+
+export const getNextCoordDown = (baseFrame: FBFrameT, currentCoord: DropZoneCoordinate): DropZoneCoordinate | null => {
+	const frame = findFrame(baseFrame, currentCoord.frameId);
+	if (frame === null) {
+		return null
+	}
+
+	if (currentCoord.index !== frame.children.length) {
+		if (frame.children.length !== 0) {
+			return { frameId: frame.children[currentCoord.index].id, index: 0 };
+		} else {
+			return null;
+		}
+	}
+
+	const parentFrame = findFrameParent(baseFrame, currentCoord.frameId);
+
+	if (parentFrame === null) {
+		if (currentCoord.index === 0) {
+			return { frameId: frame.id, index: 1};
+		} else {
+			return null;
+		}
+	} else {
+		const parentIndex = parentFrame.children.indexOf(frame);
+		return { frameId: parentFrame.id, index: parentIndex + 1 };
+	}
+
+}
+
+export const getNextCoordUp = (baseFrame: FBFrameT, currentCoord: DropZoneCoordinate): DropZoneCoordinate | null => {
+	const frame = findFrame(baseFrame, currentCoord.frameId);
+	if (frame === null) {
+		return null
+	}
+
+	if (currentCoord.index !== 0) {
+		return { frameId: frame.children[currentCoord.index - 1].id, index: frame.children[currentCoord.index - 1].children.length };
+	}
+
+	const parentFrame = findFrameParent(baseFrame, currentCoord.frameId);
+
+	if (parentFrame === null) {
+		return null;
+	} else {
+		const parentIndex = parentFrame.children.indexOf(frame);
+		return { frameId: parentFrame.id, index: parentIndex };
+	}
 }
 
 export interface FBEditor {
@@ -564,7 +566,7 @@ export interface FBEditor {
 export const frameBasedEditor: FBEditor = {
 	baseFrame: createIf("true", 0, 0, [
 		createIf('1', 1, 1, 
-			[createFunctionDefinition('test', ['a', 'b'], 2, 2)]),
+			[]),
 		createIf('2', 3, 1, 
 			[createIf('2.1', 4, 2, [])])]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
