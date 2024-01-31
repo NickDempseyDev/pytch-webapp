@@ -583,6 +583,6 @@ export const frameBasedEditor: FBEditor = {
 		moveFrame(state.baseFrame, id, index, newParentId);
 	}),
 	applyFocus: action((state, dropZoneCoordinate) => {
-		state.focusedDropZoneCoords = dropZoneCoordinate;
+		state.focusedDropZoneCoords = { frameId: dropZoneCoordinate.frameId, index: dropZoneCoordinate.index };
 	}),
 }

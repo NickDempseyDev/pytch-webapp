@@ -21,30 +21,33 @@ const FBEditor: React.FC = () => {
     editFrame(frame);
   }
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowUp":
+        const newCoords = getNextCoordUp(baseFrame, focusedDropZoneCoords);
+        if (newCoords) {
+          applyFocus(newCoords);
+        }
+        break;
+      case "ArrowDown":
+        const newCoordsDown = getNextCoordDown(baseFrame, focusedDropZoneCoords);
+        if (newCoordsDown) {
+          applyFocus(newCoordsDown);
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+
   useEffect(() => {
-    window.addEventListener("keydown", (e) => {
-      switch (e.key) {
-        case "ArrowUp":
-          const newCoords = getNextCoordUp(baseFrame, focusedDropZoneCoords);
-          if (newCoords) {
-            applyFocus(newCoords);
-          }
-          break;
-        case "ArrowDown":
-          const newCoordsDown = getNextCoordDown(baseFrame, focusedDropZoneCoords);
-          if (newCoordsDown) {
-            applyFocus(newCoordsDown);
-          }
-          break;
-        default:
-          break;
-      }
-    });
+    window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("keydown", (e) => { });
+      window.removeEventListener("keydown", handleKeyDown);
     }
-  }, []);
+  }, [focusedDropZoneCoords]);
 
   return (
     <DndProvider backend={HTML5Backend}>
