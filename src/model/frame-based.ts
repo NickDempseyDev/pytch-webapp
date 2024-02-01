@@ -1,5 +1,6 @@
 import { action, Action } from "easy-peasy";
 
+
 export enum FBTypes {
 	NOP,
 	IF,
@@ -19,7 +20,7 @@ type FBBaseFrameT = {
 	depth: number;
 	canHaveChildren: boolean;
 	children: FBFrameT[];
-	extractTextualPython: (childre: FBFrameT[]) => string;
+	extractTextualPython: (children: FBFrameT[], indentation: number) => string;
 	hasFocus: boolean;
 }
 
@@ -68,17 +69,17 @@ export type FBClassDefinitionT = {
 
 export type FBFrameT = FBNOPT | FBExpressionT | FBIfT | FBWhileT | FBForT | FBAssignmentT | FBCommentT | FBFunctionDefinitionT | FBFunctionCallT | FBClassDefinitionT;
 
-const creatNOP = (id: number, depth: number): FBNOPT => {
+const creatNOP = (id: number, depth: number, children: FBFrameT[]): FBNOPT => {
 	return {
 		type: FBTypes.NOP,
 		id,
 		depth,
 		canHaveChildren: true,
-		children: [],
+		children: children,
 		hasFocus: false,
 		extractTextualPython: (children: FBFrameT[]) => {
-			return children.map((child) => child.extractTextualPython(child.children)).join("\n");
-		}
+			return children.map((child) => child.extractTextualPython(child.children, 1)).join("\n");
+		}		
 	}
 }
 
@@ -91,37 +92,39 @@ export const createIf = (booleanExpression: string, id: number, depth: number, c
 		children: children,
 		hasFocus: false,
 		booleanExpression,
-		extractTextualPython: (children: FBFrameT[]) => {
-			let result = "if " + booleanExpression + ":\n";
+		extractTextualPython: (children: FBFrameT[], indentation = 1) => {
+			let result = `if ${booleanExpression}:\n`;
+		
 			if (children.length > 0) {
 				for (let child of children) {
-					result = result + "\n   " + child.extractTextualPython(child.children);
+					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
 				}
 			} else {
-				result += "    pass\n";
+				result += '    '.repeat(indentation) + 'pass\n';
 			}
+		
 			return result;
 		}
 	}
 }
 
-export const createWhile = (booleanExpression: string, id: number, depth: number): FBWhileT => {
+export const createWhile = (booleanExpression: string, id: number, depth: number, children: FBFrameT[]): FBWhileT => {
 	return {
 		type: FBTypes.WHILE,
 		id,
 		depth,
 		canHaveChildren: true,
-		children: [],
+		children: children,
 		booleanExpression,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
 			let result = "while " + booleanExpression + ":\n";
 			if (children.length > 0) {
 				for (let child of children) {
-					result = result + "\n   " + child.extractTextualPython(child.children);
+					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
 				}
 			} else {
-				result += "    pass\n";
+				result += '    '.repeat(indentation) + 'pass\n';
 			}
 			return result;
 		}
@@ -138,14 +141,14 @@ export const createFor = (iterator: string, collection: string, id: number, dept
 		iterator,
 		collection,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
 			let result = "for " + iterator + " in " + collection + ":\n";
 			if (children.length > 0) {
 				for (let child of children) {
-					result = result + "\n   " + child.extractTextualPython(child.children);
+					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
 				}
 			} else {
-				result += "    pass\n";
+				result += '    '.repeat(indentation) + 'pass\n';
 			}
 			return result;
 		}
@@ -162,8 +165,8 @@ export const createAssignment = (variable: string, value: string, id: number, de
 		variable,
 		hasFocus: false,
 		value,
-		extractTextualPython: (children: FBFrameT[]) => {
-			return variable + " = " + value;
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
+			return variable + " = " + value + "\n";
 		}
 	}
 }
@@ -177,7 +180,7 @@ export const createComment = (text: string, id: number, depth: number): FBCommen
 		children: [],
 		hasFocus: false,
 		text,
-		extractTextualPython: (children: FBFrameT[]) => {
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
 			return text;
 		}
 	}
@@ -193,7 +196,7 @@ export const createFunctionDefinition = (name: string, parameters: string[], id:
 		name,
 		hasFocus: false,
 		parameters,
-		extractTextualPython: (children: FBFrameT[]) => {
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
 			let result = "def " + name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
@@ -204,10 +207,10 @@ export const createFunctionDefinition = (name: string, parameters: string[], id:
 			result += "):\n";
 			if (children.length > 0) {
 				for (let child of children) {
-					result = result + "\n   " + child.extractTextualPython(child.children);
+					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
 				}
 			} else {
-				result += "    pass\n";
+				result += '    '.repeat(indentation) + 'pass\n';
 			}
 			return result;
 		}
@@ -224,7 +227,7 @@ export const createFunctionCall = (name: string, parameters: string[], id: numbe
 		name,
 		parameters,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
 			let result = name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
@@ -248,8 +251,8 @@ export const createClassDefinition = (name: string, parameters: string[], id: nu
 		name,
 		parameters,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
-			let result = "class " + name + "(";
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
+			let result = "def " + name + "(";
 			for (let i = 0; i < parameters.length; i++) {
 				result += parameters[i];
 				if (i < parameters.length - 1) {
@@ -259,10 +262,10 @@ export const createClassDefinition = (name: string, parameters: string[], id: nu
 			result += "):\n";
 			if (children.length > 0) {
 				for (let child of children) {
-					result = result + "\n   " + child.extractTextualPython(child.children);
+					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
 				}
 			} else {
-				result += "    pass\n";
+				result += '    '.repeat(indentation) + 'pass\n';
 			}
 			return result;
 		}
@@ -278,8 +281,8 @@ export const createExpression = (text: string, id: number, depth: number): FBExp
 		children: [],
 		text,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
-			return text;
+		extractTextualPython: (children: FBFrameT[], indentation: number) => {
+			return text + "\n";
 		}
 	}
 }
@@ -493,6 +496,12 @@ const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, 
 	return true;
 }
 
+export const printCodeRecursive = (frame: FBFrameT) => {
+	const code = frame.extractTextualPython(frame.children, 0);
+	console.log(code);
+	return code;
+}
+
 export interface FBEditor {
 	baseFrame: FBFrameT;
 	focusedDropZoneCoords: DropZoneCoordinate
@@ -506,11 +515,13 @@ export interface FBEditor {
 }
 
 export const frameBasedEditor: FBEditor = {
-	baseFrame: createIf("true", 0, 0, [
-		createIf('1', 1, 1, 
-			[]),
-		createIf('2', 3, 1, 
-			[createIf('2.1', 4, 2, [])])]),
+	baseFrame: creatNOP(0, 0, [
+		createExpression('import pytch', 1, 1),
+		createIf('True', 2, 1, 
+			[createExpression('print("Hello World")', 6, 2)]),
+			createAssignment('i', '5', 7, 1),
+		createIf('True', 3, 1, 
+			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 1),])]),]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
 	nextId: 5,
 	incrementId: action((state) => {

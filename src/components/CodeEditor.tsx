@@ -111,6 +111,8 @@ const CodeAceEditor = () => {
     noteCodeChange();
   };
 
+
+
   // (The cast "as any" is because the "enableBasicAutocompletion" prop
   // is typed as taking either a boolean or an array of strings, whereas
   // it will in fact take an array of class instances, which is how we
@@ -160,6 +162,13 @@ const onKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
 }
 
 const CodeEditor = () => {
+  const { build, setCodeText, noteCodeChange } = useStoreActions(
+    (actions) => actions.activeProject
+  );
+  const runCode = (code: string) => {
+    setCodeText(code);
+    build("running-project");
+  }
   return (
     <div onKeyDown={(e) => onKeyPress} className="CodeEditor">
       <LinkedContentBar />
@@ -168,7 +177,7 @@ const CodeEditor = () => {
           <HelpSidebar />
           <HelpSidebarOpenControl />
         </div>
-        <FBEditor />
+        <FBEditor run={runCode} />
       </div>
     </div>
   );

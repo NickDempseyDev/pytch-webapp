@@ -17,9 +17,10 @@ import {
   createFor,
   createFunctionCall,
   createFunctionDefinition,
+  printCodeRecursive
 } from '../../model/frame-based';
 
-const FBEditor: React.FC = () => {
+const FBEditor: React.FC<{ run: (code: string) => void }> = ({ run }) => {
 
   const { baseFrame, focusedDropZoneCoords, nextId } = useStoreState((state) => state.frameBasedEditor);
   const { moveFrame, editFrame, applyFocus, createNewFrame, incrementId } = useStoreActions((actions) => actions.frameBasedEditor);
@@ -62,7 +63,7 @@ const FBEditor: React.FC = () => {
       case "w":
         const parentFrameWhile = findFrame(baseFrame, focusedDropZoneCoords.frameId);
         if (parentFrameWhile) {
-          const newWhile = createWhile("", getNextId(), parentFrameWhile?.depth + 1);
+          const newWhile = createWhile("", getNextId(), parentFrameWhile?.depth + 1, []);
           createNewFrame({ frame: newWhile, parentId: focusedDropZoneCoords.frameId, index: focusedDropZoneCoords.index });
         }
         break;
@@ -138,6 +139,12 @@ const FBEditor: React.FC = () => {
         applyFocus={applyFocus}
         focusedDropZoneCoords={focusedDropZoneCoords}
       />
+      <div>
+        <button onClick={() => {
+          printCodeRecursive(baseFrame);
+          run(printCodeRecursive(baseFrame));
+        }}>Print Python</button>
+      </div>
     </DndProvider>
   );
 };
