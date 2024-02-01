@@ -73,23 +73,24 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, paren
           </>
         );
       })}
-      <DropZone
+      {frame.canHaveChildren && <DropZone
         key={frame.id + 'dropzone'}
         parentId={frame.id}
         index={frame.children.length}
         moveFrame={moveFrame}
         applyFocus={applyFocus}
         focusedDropZoneCoords={focusedDropZoneCoords}
-      />
+      />}
     </>
   };
 
   return (
     <div ref={drag} className={`frame dep-${frame.depth}`}>
       {getCorrectFrameComponent(frame)}
-      <div className={`child-frame`}>
-        {renderChildren(frame)}
-      </div>
+      {frame.canHaveChildren &&
+        <div className={`child-frame`}>
+          {renderChildren(frame)}
+        </div>}
     </div>
   );
 };

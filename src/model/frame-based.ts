@@ -1,5 +1,4 @@
 import { action, Action } from "easy-peasy";
-import { notInitialized } from "react-redux/es/utils/useSyncExternalStore";
 
 export enum FBTypes {
 	NOP,
@@ -285,81 +284,6 @@ export const createExpression = (text: string, id: number, depth: number): FBExp
 	}
 }
 
-export const addAllChildrenToFrame = (frame: FBFrameT, children: FBFrameT[]) : boolean => {
-	if (!frame.canHaveChildren) {
-		return false;
-	}
-
-	frame.children.push(...children);
-	return true;
-}
-
-export const addChildToFrame = (frame: FBFrameT, child: FBFrameT) : boolean => {
-	if (!frame.canHaveChildren) {
-		return false;
-	}
-
-	frame.children.push(child);
-	return true;
-}
-
-export const editIf = (frame: FBIfT, booleanExpression: string, children: FBFrameT[]) : boolean => {
-	// TODO: validate expression maybe?
-	frame.booleanExpression = booleanExpression;
-	frame.children = children;
-	return true;
-}
-
-export const editWhile = (frame: FBWhileT, booleanExpression: string, children: FBFrameT[]) : boolean => {
-	// TODO: validate expression maybe?
-	frame.booleanExpression = booleanExpression;
-	frame.children = children;
-	return true;
-}
-
-export const editFor = (frame: FBForT, iterator: string, collection: string, children: FBFrameT[]) : boolean => {
-	frame.iterator = iterator;
-	frame.collection = collection;
-	frame.children = children;
-	return true;
-}
-
-export const editAssignment = (frame: FBAssignmentT, variable: string, value: string) : boolean => {
-	frame.variable = variable;
-	frame.value = value;
-	return true;
-}
-
-export const editComment = (frame: FBCommentT, text: string) : boolean => {
-	frame.text = text;
-	return true;
-}
-
-export const editFunctionDefinition = (frame: FBFunctionDefinitionT, name: string, parameters: string[], children: FBFrameT[]) : boolean => {
-	frame.name = name;
-	frame.parameters = parameters;
-	frame.children = children;
-	return true;
-}
-
-export const editFunctionCall = (frame: FBFunctionCallT, name: string, parameters: string[]) : boolean => {
-	frame.name = name;
-	frame.parameters = parameters;
-	return true;
-}
-
-export const editClassDefinition = (frame: FBClassDefinitionT, name: string, parameters: string[], children: FBFrameT[]) : boolean => {
-	frame.name = name;
-	frame.parameters = parameters;
-	frame.children = children;
-	return true;
-}
-
-export const editExpression = (frame: FBExpressionT, text: string) : boolean => {
-	frame.text = text;
-	return true;
-}
-
 export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
 	// delete the frame with ID from the tree
 	// return true if successful, false otherwise
@@ -404,7 +328,7 @@ export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => 
 	return edited;
 }
 
-const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
+export const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
 	if (baseFrame.id === id) {
 		return baseFrame;
 	}
@@ -553,14 +477,32 @@ export const getNextCoordUp = (baseFrame: FBFrameT, currentCoord: DropZoneCoordi
 	}
 }
 
+const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, index: number) : boolean => {
+	const parentFrame = findFrame(baseFrame, parentId);
+	
+	if (parentFrame === null) {
+		return false;
+	}
+
+	if (parentFrame.canHaveChildren === false) {
+		return false;
+	}
+	
+	parentFrame.children.splice(index, 0, frame);
+
+	return true;
+}
+
 export interface FBEditor {
 	baseFrame: FBFrameT;
 	focusedDropZoneCoords: DropZoneCoordinate
-	createNewFrame: Action<FBEditor, FBFrameT>;
+	createNewFrame: Action<FBEditor, { frame: FBFrameT, parentId: number, index: number }>;
 	editFrame: Action<FBEditor, FBFrameT>;
 	deleteFrame: Action<FBEditor, number>;
-	moveFrame: Action<FBEditor, {id: number, index: number, newParentId: number}>;
+	moveFrame: Action<FBEditor, { id: number, index: number, newParentId: number }>;
 	applyFocus: Action<FBEditor, { frameId: number, index: number }>;
+	incrementId: Action<FBEditor>;
+	nextId: number;
 }
 
 export const frameBasedEditor: FBEditor = {
@@ -570,8 +512,12 @@ export const frameBasedEditor: FBEditor = {
 		createIf('2', 3, 1, 
 			[createIf('2.1', 4, 2, [])])]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
-	createNewFrame: action((state, frame) => {
-		addChildToFrame(state.baseFrame, frame);
+	nextId: 5,
+	incrementId: action((state) => {
+		state.nextId++;
+	}),
+	createNewFrame: action((state, { frame, parentId, index }) => {
+		createNewFrame(state.baseFrame, frame, parentId, index);
 	}),
 	editFrame: action((state, frame) => {
 		editFrame(state.baseFrame, frame);
