@@ -1,7 +1,8 @@
-import { FBFunctionCallT } from '../../../model/frame-based'
+import { FBFunctionCallT, FBFrameT } from '../../../model/frame-based'
 
 type FunctionCallFrameProps = {
   frame: FBFunctionCallT
+  editFrame: (frame: FBFrameT) => void
 }
 
 const getParameters = (parameters: string[]) => {
@@ -18,7 +19,8 @@ const getParameters = (parameters: string[]) => {
   return result;
 }
 
-const FunctionCallFrame = ({ frame }: FunctionCallFrameProps) => {
+const FunctionCallFrame = ({ frame, editFrame }: FunctionCallFrameProps) => {
+
   return (
     <div><input type="text" value={frame.name} />({getParameters(frame.parameters)})</div>
   )

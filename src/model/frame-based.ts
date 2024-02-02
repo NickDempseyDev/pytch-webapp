@@ -310,25 +310,20 @@ export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
 	return deleted;
 }
 
-// TODO: might need to add switch statement for different types of frames
-// so that we can validate the input
 export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => {
-	let edited = false;
-	while (edited === false) {
-		for (let i = 0; i < baseFrame.children.length; i++) {
-			if (baseFrame.children[i].id === newFrame.id) {
-				baseFrame.children[i] = newFrame;
-				edited = true;
-				break;
-			} else {
-				edited = editFrame(baseFrame.children[i], newFrame);
-				if (edited) {
-					break;
-				}
-			}
+	if (baseFrame.id === newFrame.id) {
+		Object.assign(baseFrame, newFrame);
+		return true;
+	}
+
+	for (let child of baseFrame.children) {
+		const result = editFrame(child, newFrame);
+		if (result) {
+			return true;
 		}
 	}
-	return edited;
+
+	return false;
 }
 
 export const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
@@ -376,9 +371,6 @@ const moveFrame = (baseFrame: FBFrameT, id: number, index: number, newParentId: 
 	const newDepth = parentFrame.depth + 1;
 
 	deleteFrame(baseFrame, id);
-
-	// add frame to new parent at given index if the length is greather than 1
-	console.log('INDEX IS: ', index);
 	
 	if (parentFrame.children.length > 0) {
 		parentFrame.children.splice(index, 0, frame);
@@ -498,7 +490,6 @@ const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, 
 
 export const printCodeRecursive = (frame: FBFrameT) => {
 	const code = frame.extractTextualPython(frame.children, 0);
-	console.log(code);
 	return code;
 }
 
@@ -521,7 +512,7 @@ export const frameBasedEditor: FBEditor = {
 			[createExpression('print("Hello World")', 6, 2)]),
 			createAssignment('i', '5', 7, 1),
 		createIf('True', 3, 1, 
-			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 1),])]),]),
+			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 3),])]),]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
 	nextId: 5,
 	incrementId: action((state) => {

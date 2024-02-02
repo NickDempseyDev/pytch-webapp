@@ -166,6 +166,7 @@ const CodeEditor = () => {
     (actions) => actions.activeProject
   );
   const runCode = (code: string) => {
+    console.log(code);
     setCodeText(code);
     build("running-project");
   }

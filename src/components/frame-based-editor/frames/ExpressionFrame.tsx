@@ -1,12 +1,16 @@
-import { FBExpressionT } from '../../../model/frame-based'
+import { FBExpressionT, FBFrameT } from '../../../model/frame-based'
 
 type ExpressionFrameProps = {
-  frame: FBExpressionT
+  frame: FBExpressionT;
+  editFrame: (frame: FBFrameT) => void;
 }
 
-const ExpressionFrame = ({ frame }: ExpressionFrameProps) => {
+const ExpressionFrame = ({ frame, editFrame }: ExpressionFrameProps) => {
+  const changeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    editFrame({ ...frame, text: event.target.value })
+  }
   return (
-    <div><input type="text" value={frame.text} /></div>
+    <div><input type="text" value={frame.text} onChange={changeInput} /></div>
   )
 }
 

@@ -1,8 +1,9 @@
 import React from 'react';
-import { FBFunctionDefinitionT } from '../../../model/frame-based'
+import { FBFunctionDefinitionT, FBFrameT } from '../../../model/frame-based'
 
 type FunctionDefinitionFrameProps = {
   frame: FBFunctionDefinitionT
+  editFrame: (frame: FBFrameT) => void
 }
 
 const mapParametersToInputFields = (parameters: string[]) => {
@@ -14,7 +15,7 @@ const mapParametersToInputFields = (parameters: string[]) => {
   ));
 };
 
-const FunctionDefinitionFrame = ({ frame }: FunctionDefinitionFrameProps) => {
+const FunctionDefinitionFrame = ({ frame, editFrame }: FunctionDefinitionFrameProps) => {
   return (
     <div>def <input type="text" value={frame.name} />({mapParametersToInputFields(frame.parameters)})</div>
   )

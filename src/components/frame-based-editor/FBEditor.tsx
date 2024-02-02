@@ -141,8 +141,8 @@ const FBEditor: React.FC<{ run: (code: string) => void }> = ({ run }) => {
       />
       <div>
         <button onClick={() => {
-          printCodeRecursive(baseFrame);
-          run(printCodeRecursive(baseFrame));
+          const code = printCodeRecursive(baseFrame)
+          run(code);
         }}>Print Python</button>
       </div>
     </DndProvider>
