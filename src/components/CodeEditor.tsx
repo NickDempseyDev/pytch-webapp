@@ -165,9 +165,9 @@ const CodeEditor = () => {
   const { build, setCodeText, noteCodeChange } = useStoreActions(
     (actions) => actions.activeProject
   );
-  const runCode = (code: string) => {
-    console.log(code);
-    setCodeText(code);
+  const runCode = (generatedCode: string) => {
+    setCodeText(generatedCode);
+    noteCodeChange();
     build("running-project");
   }
   return (

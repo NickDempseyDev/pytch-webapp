@@ -121,7 +121,6 @@ const FBEditor: React.FC<{ run: (code: string) => void }> = ({ run }) => {
     }
   };
 
-
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
 
@@ -141,8 +140,9 @@ const FBEditor: React.FC<{ run: (code: string) => void }> = ({ run }) => {
       />
       <div>
         <button onClick={() => {
-          const code = printCodeRecursive(baseFrame)
-          run(code);
+          const generatedCode = printCodeRecursive(baseFrame)
+          console.log(generatedCode);
+          run(generatedCode);
         }}>Print Python</button>
       </div>
     </DndProvider>

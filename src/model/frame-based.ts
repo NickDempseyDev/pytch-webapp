@@ -20,7 +20,6 @@ type FBBaseFrameT = {
 	depth: number;
 	canHaveChildren: boolean;
 	children: FBFrameT[];
-	extractTextualPython: (children: FBFrameT[], indentation: number) => string;
 	hasFocus: boolean;
 }
 
@@ -77,9 +76,9 @@ const creatNOP = (id: number, depth: number, children: FBFrameT[]): FBNOPT => {
 		canHaveChildren: true,
 		children: children,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[]) => {
-			return children.map((child) => child.extractTextualPython(child.children, 1)).join("\n");
-		}		
+		// extractTextualPython: (children: FBFrameT[]) => {
+		// 	return children.map((child) => child.extractTextualPython(child.children, 1)).join("\n");
+		// }		
 	}
 }
 
@@ -92,19 +91,19 @@ export const createIf = (booleanExpression: string, id: number, depth: number, c
 		children: children,
 		hasFocus: false,
 		booleanExpression,
-		extractTextualPython: (children: FBFrameT[], indentation = 1) => {
-			let result = `if ${booleanExpression}:\n`;
+		// extractTextualPython: (children: FBFrameT[], indentation = 1) => {
+		// 	let result = `if ${booleanExpression}:\n`;
 		
-			if (children.length > 0) {
-				for (let child of children) {
-					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
-				}
-			} else {
-				result += '    '.repeat(indentation) + 'pass\n';
-			}
+		// 	if (children.length > 0) {
+		// 		for (let child of children) {
+		// 			result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
+		// 		}
+		// 	} else {
+		// 		result += '    '.repeat(indentation) + 'pass\n';
+		// 	}
 		
-			return result;
-		}
+		// 	return result;
+		// }
 	}
 }
 
@@ -117,17 +116,17 @@ export const createWhile = (booleanExpression: string, id: number, depth: number
 		children: children,
 		booleanExpression,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			let result = "while " + booleanExpression + ":\n";
-			if (children.length > 0) {
-				for (let child of children) {
-					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
-				}
-			} else {
-				result += '    '.repeat(indentation) + 'pass\n';
-			}
-			return result;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	let result = "while " + booleanExpression + ":\n";
+		// 	if (children.length > 0) {
+		// 		for (let child of children) {
+		// 			result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
+		// 		}
+		// 	} else {
+		// 		result += '    '.repeat(indentation) + 'pass\n';
+		// 	}
+		// 	return result;
+		// }
 	}
 }
 
@@ -141,17 +140,17 @@ export const createFor = (iterator: string, collection: string, id: number, dept
 		iterator,
 		collection,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			let result = "for " + iterator + " in " + collection + ":\n";
-			if (children.length > 0) {
-				for (let child of children) {
-					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
-				}
-			} else {
-				result += '    '.repeat(indentation) + 'pass\n';
-			}
-			return result;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	let result = "for " + iterator + " in " + collection + ":\n";
+		// 	if (children.length > 0) {
+		// 		for (let child of children) {
+		// 			result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
+		// 		}
+		// 	} else {
+		// 		result += '    '.repeat(indentation) + 'pass\n';
+		// 	}
+		// 	return result;
+		// }
 	}
 }
 
@@ -165,9 +164,9 @@ export const createAssignment = (variable: string, value: string, id: number, de
 		variable,
 		hasFocus: false,
 		value,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			return variable + " = " + value + "\n";
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	return variable + " = " + value + "\n";
+		// }
 	}
 }
 
@@ -180,9 +179,9 @@ export const createComment = (text: string, id: number, depth: number): FBCommen
 		children: [],
 		hasFocus: false,
 		text,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			return text;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	return text;
+		// }
 	}
 }
 
@@ -196,24 +195,24 @@ export const createFunctionDefinition = (name: string, parameters: string[], id:
 		name,
 		hasFocus: false,
 		parameters,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			let result = "def " + name + "(";
-			for (let i = 0; i < parameters.length; i++) {
-				result += parameters[i];
-				if (i < parameters.length - 1) {
-					result += ", ";
-				}
-			}
-			result += "):\n";
-			if (children.length > 0) {
-				for (let child of children) {
-					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
-				}
-			} else {
-				result += '    '.repeat(indentation) + 'pass\n';
-			}
-			return result;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	let result = "def " + name + "(";
+		// 	for (let i = 0; i < parameters.length; i++) {
+		// 		result += parameters[i];
+		// 		if (i < parameters.length - 1) {
+		// 			result += ", ";
+		// 		}
+		// 	}
+		// 	result += "):\n";
+		// 	if (children.length > 0) {
+		// 		for (let child of children) {
+		// 			result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
+		// 		}
+		// 	} else {
+		// 		result += '    '.repeat(indentation) + 'pass\n';
+		// 	}
+		// 	return result;
+		// }
 	}
 }
 
@@ -227,17 +226,17 @@ export const createFunctionCall = (name: string, parameters: string[], id: numbe
 		name,
 		parameters,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			let result = name + "(";
-			for (let i = 0; i < parameters.length; i++) {
-				result += parameters[i];
-				if (i < parameters.length - 1) {
-					result += ", ";
-				}
-			}
-			result += ")";
-			return result;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	let result = name + "(";
+		// 	for (let i = 0; i < parameters.length; i++) {
+		// 		result += parameters[i];
+		// 		if (i < parameters.length - 1) {
+		// 			result += ", ";
+		// 		}
+		// 	}
+		// 	result += ")";
+		// 	return result;
+		// }
 	}
 }
 
@@ -251,24 +250,24 @@ export const createClassDefinition = (name: string, parameters: string[], id: nu
 		name,
 		parameters,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			let result = "def " + name + "(";
-			for (let i = 0; i < parameters.length; i++) {
-				result += parameters[i];
-				if (i < parameters.length - 1) {
-					result += ", ";
-				}
-			}
-			result += "):\n";
-			if (children.length > 0) {
-				for (let child of children) {
-					result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
-				}
-			} else {
-				result += '    '.repeat(indentation) + 'pass\n';
-			}
-			return result;
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	let result = "def " + name + "(";
+		// 	for (let i = 0; i < parameters.length; i++) {
+		// 		result += parameters[i];
+		// 		if (i < parameters.length - 1) {
+		// 			result += ", ";
+		// 		}
+		// 	}
+		// 	result += "):\n";
+		// 	if (children.length > 0) {
+		// 		for (let child of children) {
+		// 			result += '    '.repeat(indentation) + child.extractTextualPython(child.children, indentation + 1);
+		// 		}
+		// 	} else {
+		// 		result += '    '.repeat(indentation) + 'pass\n';
+		// 	}
+		// 	return result;
+		// }
 	}
 }
 
@@ -281,9 +280,9 @@ export const createExpression = (text: string, id: number, depth: number): FBExp
 		children: [],
 		text,
 		hasFocus: false,
-		extractTextualPython: (children: FBFrameT[], indentation: number) => {
-			return text + "\n";
-		}
+		// extractTextualPython: (children: FBFrameT[], indentation: number) => {
+		// 	return text + "\n";
+		// }
 	}
 }
 
@@ -310,20 +309,150 @@ export const deleteFrame = (frame: FBFrameT, id: number) : boolean => {
 	return deleted;
 }
 
-export const editFrame = (baseFrame: FBFrameT, newFrame: FBFrameT) : boolean => {
-	if (baseFrame.id === newFrame.id) {
-		Object.assign(baseFrame, newFrame);
-		return true;
+export const extractTextualPython = (frame: FBFrameT[], indentation: number): string => {
+	let result = '';
+	for (let i = 0; i < frame.length; i++) {
+		// @ts-ignore
+		result += '    '.repeat(indentation) + mapFrameToExtractFunction[frame[i].type](frame[i], indentation) + "\n";
 	}
 
-	for (let child of baseFrame.children) {
-		const result = editFrame(child, newFrame);
-		if (result) {
-			return true;
+	return result;
+}
+
+const extractTextualPythonFromIfFrame = (frame: FBIfT, indentation: number) => {
+	let result = `if ${frame.booleanExpression}:\n`;
+	if (frame.children.length > 0) {
+		for (let child of frame.children) {
+			result += '    '.repeat(indentation) + extractTextualPython(child.children, indentation + 1);
+		}
+	} else {
+		result += '    '.repeat(indentation) + 'pass\n';
+	}
+	return result;
+}
+
+const extractTextualPythonFromWhileFrame = (frame: FBWhileT, indentation: number) => {
+	let result = "while " + frame.booleanExpression + ":\n";
+	if (frame.children.length > 0) {
+		for (let child of frame.children) {
+			result += '    '.repeat(indentation) + extractTextualPython(child.children, indentation + 1);
+		}
+	} else {
+		result += '    '.repeat(indentation) + 'pass\n';
+	}
+	return result;
+}
+
+const extractTextualPythonFromForFrame = (frame: FBForT, indentation: number) => {
+	let result = "for " + frame.iterator + " in " + frame.collection + ":\n";
+	if (frame.children.length > 0) {
+		for (let child of frame.children) {
+			result += '    '.repeat(indentation) + extractTextualPython(child.children, indentation + 1);
+		}
+	} else {
+		result += '    '.repeat(indentation) + 'pass\n';
+	}
+	return result;
+}
+
+const extractTextualPythonFromAssignmentFrame = (frame: FBAssignmentT, indentation: number) => {
+	return frame.variable + " = " + frame.value + "\n";
+}
+
+const extractTextualPythonFromCommentFrame = (frame: FBCommentT, indentation: number) => {
+	return frame.text;
+}
+
+const extractTextualPythonFromFunctionDefinitionFrame = (frame: FBFunctionDefinitionT, indentation: number) => {
+	let result = "def " + frame.name + "(";
+	for (let i = 0; i < frame.parameters.length; i++) {
+		result += frame.parameters[i];
+		if (i < frame.parameters.length - 1) {
+			result += ", ";
 		}
 	}
+	result += "):\n";
+	if (frame.children.length > 0) {
+		for (let child of frame.children) {
+			result += '    '.repeat(indentation) + extractTextualPython(child.children, indentation + 1);
+		}
+	} else {
+		result += '    '.repeat(indentation) + 'pass\n';
+	}
+	return result;
+}
 
-	return false;
+const extractTextualPythonFromFunctionCallFrame = (frame: FBFunctionCallT, indentation: number) => {
+	let result = frame.name + "(";
+	for (let i = 0; i < frame.parameters.length; i++) {
+		result += frame.parameters[i];
+		if (i < frame.parameters.length - 1) {
+			result += ", ";
+		}
+	}
+	result += ")";
+	return result;
+}
+
+const extractTextualPythonFromClassDefinitionFrame = (frame: FBClassDefinitionT, indentation: number) => {
+	let result = "def " + frame.name + "(";
+	for (let i = 0; i < frame.parameters.length; i++) {
+		result += frame.parameters[i];
+		if (i < frame.parameters.length - 1) {
+			result += ", ";
+		}
+	}
+	result += "):\n";
+	if (frame.children.length > 0) {
+		for (let child of frame.children) {
+			result += '    '.repeat(indentation) + extractTextualPython(child.children, indentation + 1);
+		}
+	} else {
+		result += '    '.repeat(indentation) + 'pass\n';
+	}
+	return result;
+}
+
+const extractTextualPythonFromExpressionFrame = (frame: FBExpressionT, indentation: number) => {
+	return frame.text + "\n";
+}
+
+const mapFrameToExtractFunction = {
+	[FBTypes.NOP]: extractTextualPython,
+	[FBTypes.IF]: extractTextualPythonFromIfFrame,
+	[FBTypes.WHILE]: extractTextualPythonFromWhileFrame,
+	[FBTypes.FOR]: extractTextualPythonFromForFrame,
+	[FBTypes.ASSIGNMENT]: extractTextualPythonFromAssignmentFrame,
+	[FBTypes.COMMENT]: extractTextualPythonFromCommentFrame,
+	[FBTypes.FUNCTION_DEFINITION]: extractTextualPythonFromFunctionDefinitionFrame,
+	[FBTypes.FUNCTION_CALL]: extractTextualPythonFromFunctionCallFrame,
+	[FBTypes.CLASS_DEFINITION]: extractTextualPythonFromClassDefinitionFrame,
+	[FBTypes.EXPRESSION]: extractTextualPythonFromExpressionFrame,
+}
+
+export const printCodeRecursive = (frame: FBFrameT) => {
+	const codeText = extractTextualPython(frame.children, 0);
+	return codeText;
+}
+
+const recursiveEditFrame = (frame: any, newFrame: any) => {
+    if (frame.id === newFrame.id) {
+        Object.assign(frame, newFrame); // Update frame properties
+        return true;
+    }
+
+    for (let i = 0; i < frame.children.length; i++) {
+        if (recursiveEditFrame(frame.children[i], newFrame)) {
+            return true; // Return true if the frame is found and updated
+        }
+    }
+
+    return false; // Return false if frame is not found
+};
+
+const deepCopy = (frame: FBFrameT) : FBFrameT => {
+	const newFrame = JSON.parse(JSON.stringify(frame));
+	return newFrame;
 }
 
 export const findFrame = (baseFrame: FBFrameT, id: number) : FBFrameT | null => {	
@@ -488,11 +617,6 @@ const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, 
 	return true;
 }
 
-export const printCodeRecursive = (frame: FBFrameT) => {
-	const code = frame.extractTextualPython(frame.children, 0);
-	return code;
-}
-
 export interface FBEditor {
 	baseFrame: FBFrameT;
 	focusedDropZoneCoords: DropZoneCoordinate
@@ -521,8 +645,12 @@ export const frameBasedEditor: FBEditor = {
 	createNewFrame: action((state, { frame, parentId, index }) => {
 		createNewFrame(state.baseFrame, frame, parentId, index);
 	}),
-	editFrame: action((state, frame) => {
-		editFrame(state.baseFrame, frame);
+	editFrame: action((state, newFrame) => {
+		const updatedBaseFrame = deepCopy(state.baseFrame); // Create a deep copy of the baseFrame
+		const success = recursiveEditFrame(updatedBaseFrame, newFrame); // Perform recursive edit
+		if (success) {
+			state.baseFrame = updatedBaseFrame; // Update state with the new baseFrame
+		}
 	}),
 	deleteFrame: action((state, id) => {
 		deleteFrame(state.baseFrame, id);
