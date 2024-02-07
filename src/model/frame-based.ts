@@ -1,4 +1,4 @@
-import { action, Action } from "easy-peasy";
+import { action, Action, FilterActionTypes, StateMapper } from "easy-peasy";
 
 
 export enum FBTypes {
@@ -219,7 +219,9 @@ const extractTextualPython = (frames: FBFrameT[], indentation: number): string =
 	}
 	
 	let result = '    '.repeat(indentation);
-	for (let i = 0; i < frames.length; i++) {		
+	for (let i = 0; i < frames.length; i++) {
+		console.log(frames[i].id, frames[i].depth);
+		
 		switch (frames[i].type) {
 			case FBTypes.NOP:
 				result += extractTextualPython([frames[i]], indentation);
@@ -258,9 +260,7 @@ const extractTextualPython = (frames: FBFrameT[], indentation: number): string =
 	return result;
 }
 
-const extractTextualPythonFromIfFrame = (frame: FBIfT, indentation: number) => {
-	console.log(frame);
-	
+const extractTextualPythonFromIfFrame = (frame: FBIfT, indentation: number) => {	
 	let result = `if ${frame.booleanExpression}:\n`;
 	if (frame.children.length > 0) {
 		for (let child of frame.children) {
@@ -274,7 +274,6 @@ const extractTextualPythonFromIfFrame = (frame: FBIfT, indentation: number) => {
 
 const extractTextualPythonFromWhileFrame = (frame: FBWhileT, indentation: number) => {
 	let result = "while " + frame.booleanExpression + ":\n";
-	console.log(frame.children);
 	
 	if (frame.children.length > 0) {
 		for (let child of frame.children) {
@@ -356,9 +355,7 @@ const extractTextualPythonFromClassDefinitionFrame = (frame: FBClassDefinitionT,
 	return result;
 }
 
-const extractTextualPythonFromExpressionFrame = (frame: FBExpressionT, indentation: number) => {
-	console.log(frame);
-	
+const extractTextualPythonFromExpressionFrame = (frame: FBExpressionT, indentation: number) => {	
 	return frame.text + "\n";
 }
 
@@ -469,14 +466,13 @@ const createNestedIfsRecursive = (currentDepth: number, maxDepth: number, nextId
 	return createIf('true', currentDepth, currentDepth, [createNestedIfsRecursive(currentDepth + 1, maxDepth, nextId +1)]);
 }
 
-const assignIdsAndDepthRecursive = (frame: FBFrameT, nextId: number, depth: number): number => {
-	frame.id = nextId;
-	frame.depth = depth;
-	nextId++;
+const assignIdsRecursive = (frame: FBFrameT, nextId: number): number => {
+	let idNew = nextId;
+	frame.id = idNew;
 	for (let child of frame.children) {
-		nextId = assignIdsAndDepthRecursive(child, nextId, depth + 1);
+		idNew = assignIdsRecursive(child, idNew + 1);
 	}
-	return nextId;
+	return idNew;
 }
 
 export type DropZoneCoordinate = {
@@ -533,8 +529,8 @@ export const getNextCoordUp = (baseFrame: FBFrameT, currentCoord: DropZoneCoordi
 	}
 }
 
-const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, index: number) : boolean => {
-	const parentFrame = findFrame(baseFrame, parentId);
+const createNewFrame = (state: StateMapper<FilterActionTypes<FBEditor>>, frame: FBFrameT, parentId: number, index: number) : boolean => {
+	const parentFrame = findFrame(state.baseFrame, parentId);
 	
 	if (parentFrame === null) {
 		return false;
@@ -544,6 +540,10 @@ const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, 
 		return false;
 	}
 	
+	frame.id = state.nextId;
+
+	state.nextId = state.nextId + 1;
+
 	parentFrame.children.splice(index, 0, frame);
 
 	return true;
@@ -557,7 +557,6 @@ export interface FBEditor {
 	deleteFrame: Action<FBEditor, number>;
 	moveFrame: Action<FBEditor, { id: number, index: number, newParentId: number }>;
 	applyFocus: Action<FBEditor, { frameId: number, index: number }>;
-	incrementId: Action<FBEditor>;
 	nextId: number;
 }
 
@@ -571,17 +570,15 @@ export const frameBasedEditor: FBEditor = {
 			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 3),])]),]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
 	nextId: 5,
-	incrementId: action((state) => {
-		state.nextId++;
-	}),
 	createNewFrame: action((state, { frame, parentId, index }) => {
-		createNewFrame(state.baseFrame, frame, parentId, index);
+		createNewFrame(state, frame, parentId, index);
 	}),
 	editFrame: action((state, newFrame) => {
 		const updatedBaseFrame = deepCopy(state.baseFrame);
 		const success = recursiveEditFrame(updatedBaseFrame, newFrame);
 		if (success) {
 			state.baseFrame = updatedBaseFrame;
+			assignIdsRecursive(state.baseFrame, 0);
 		}
 	}),
 	deleteFrame: action((state, id) => {

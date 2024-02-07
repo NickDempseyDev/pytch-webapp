@@ -21,8 +21,12 @@ const getParameters = (parameters: string[]) => {
 
 const FunctionCallFrame = ({ frame, editFrame }: FunctionCallFrameProps) => {
 
+  const changeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    editFrame({ ...frame, name: event.target.value })
+  }
+
   return (
-    <div><input type="text" value={frame.name} />({getParameters(frame.parameters)})</div>
+    <div><input type="text" value={frame.name} onChange={changeInput} />({getParameters(frame.parameters)})</div>
   )
 }
 

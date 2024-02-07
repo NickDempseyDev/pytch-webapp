@@ -16,8 +16,13 @@ const mapParametersToInputFields = (parameters: string[]) => {
 };
 
 const FunctionDefinitionFrame = ({ frame, editFrame }: FunctionDefinitionFrameProps) => {
+
+  const changeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    editFrame({ ...frame, name: event.target.value })
+  }
+
   return (
-    <div>def <input type="text" value={frame.name} />({mapParametersToInputFields(frame.parameters)})</div>
+    <div>def <input type="text" value={frame.name} onChange={changeInput} />({mapParametersToInputFields(frame.parameters)})</div>
   )
 }
 
