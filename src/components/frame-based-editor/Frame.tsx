@@ -21,9 +21,10 @@ type FrameProps = {
   parentID: number;
   applyFocus: (coords: DropZoneCoordinate) => void;
   focusedDropZoneCoords: DropZoneCoordinate;
+  setIsEditingText: (isEditingText: boolean) => void;
 };
 
-const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, parentID, applyFocus, focusedDropZoneCoords }) => {
+const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, parentID, applyFocus, focusedDropZoneCoords, setIsEditingText }) => {
   const [, drag] = useDrag({
     type: 'FRAME',
     item: { id: frame.id, index, parentID },
@@ -32,15 +33,15 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, paren
 
   const getCorrectFrameComponent = (frame: FBFrameT) => {
     const frameComponents = {
-      [FBTypes.IF]: <IfFrame frame={frame as FBIfT} editFrame={editFrame} />,
-      [FBTypes.WHILE]: <WhileFrame frame={frame as FBWhileT} editFrame={editFrame} />,
-      [FBTypes.FOR]: <ForFrame frame={frame as FBForT} editFrame={editFrame} />,
-      [FBTypes.ASSIGNMENT]: <AssignmentFrame frame={frame as FBAssignmentT} editFrame={editFrame} />,
-      [FBTypes.CLASS_DEFINITION]: <ClassDefinitionFrame frame={frame as FBClassDefinitionT} editFrame={editFrame} />,
-      [FBTypes.COMMENT]: <CommentFrame frame={frame as FBCommentT} editFrame={editFrame} />,
-      [FBTypes.EXPRESSION]: <ExpressionFrame frame={frame as FBExpressionT} editFrame={editFrame} />,
-      [FBTypes.FUNCTION_CALL]: <FunctionCallFrame frame={frame as FBFunctionCallT} editFrame={editFrame} />,
-      [FBTypes.FUNCTION_DEFINITION]: <FunctionDefinitionFrame frame={frame as FBFunctionDefinitionT} editFrame={editFrame} />,
+      [FBTypes.IF]: <IfFrame frame={frame as FBIfT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.WHILE]: <WhileFrame frame={frame as FBWhileT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.FOR]: <ForFrame frame={frame as FBForT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.ASSIGNMENT]: <AssignmentFrame frame={frame as FBAssignmentT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.CLASS_DEFINITION]: <ClassDefinitionFrame frame={frame as FBClassDefinitionT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.COMMENT]: <CommentFrame frame={frame as FBCommentT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.EXPRESSION]: <ExpressionFrame frame={frame as FBExpressionT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.FUNCTION_CALL]: <FunctionCallFrame frame={frame as FBFunctionCallT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
+      [FBTypes.FUNCTION_DEFINITION]: <FunctionDefinitionFrame frame={frame as FBFunctionDefinitionT} editFrame={editFrame} setIsEditingText={setIsEditingText} />,
       [FBTypes.NOP]: <div></div>
     };
 
@@ -69,6 +70,7 @@ const Frame: React.FC<FrameProps> = ({ frame, moveFrame, editFrame, index, paren
               parentID={frame.id}
               applyFocus={applyFocus}
               focusedDropZoneCoords={focusedDropZoneCoords}
+              setIsEditingText={setIsEditingText}
             />
           </>
         );

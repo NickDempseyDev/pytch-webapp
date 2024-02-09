@@ -12,9 +12,10 @@ type BaseFrameProps = {
 	editFrame: (frame: FBFrameT) => void;
 	applyFocus: (coords: DropZoneCoordinate) => void;
 	focusedDropZoneCoords: DropZoneCoordinate;
+	setIsEditingText: (isEditingText: boolean) => void;
 }
 
-const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame, editFrame, applyFocus, focusedDropZoneCoords }) => {
+const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame, editFrame, applyFocus, focusedDropZoneCoords, setIsEditingText }) => {
 	const [, drag] = useDrag({
 		type: 'OTHER',
 		item: { id: 0 },
@@ -57,6 +58,7 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ baseFrame, moveFrame, editFrame, 
 						parentID={0} // Set the initial parent ID
 						applyFocus={applyFocus}
 						focusedDropZoneCoords={focusedDropZoneCoords}
+						setIsEditingText={setIsEditingText}
 					/>
 				</>
 			))}

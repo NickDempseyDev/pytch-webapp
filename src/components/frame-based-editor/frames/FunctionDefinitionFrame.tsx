@@ -4,6 +4,7 @@ import { FBFunctionDefinitionT, FBFrameT } from '../../../model/frame-based'
 type FunctionDefinitionFrameProps = {
   frame: FBFunctionDefinitionT
   editFrame: (frame: FBFrameT) => void
+  setIsEditingText: (isEditingText: boolean) => void
 }
 
 const mapParametersToInputFields = (parameters: string[]) => {
@@ -15,14 +16,14 @@ const mapParametersToInputFields = (parameters: string[]) => {
   ));
 };
 
-const FunctionDefinitionFrame = ({ frame, editFrame }: FunctionDefinitionFrameProps) => {
+const FunctionDefinitionFrame = ({ frame, editFrame, setIsEditingText }: FunctionDefinitionFrameProps) => {
 
   const changeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     editFrame({ ...frame, name: event.target.value })
   }
 
   return (
-    <div>def <input type="text" value={frame.name} onChange={changeInput} />({mapParametersToInputFields(frame.parameters)})</div>
+    <div>def <input type="text" value={frame.name} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />({mapParametersToInputFields(frame.parameters)})</div>
   )
 }
 

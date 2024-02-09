@@ -551,7 +551,9 @@ const createNewFrame = (state: StateMapper<FilterActionTypes<FBEditor>>, frame: 
 
 export interface FBEditor {
 	baseFrame: FBFrameT;
-	focusedDropZoneCoords: DropZoneCoordinate
+	focusedDropZoneCoords: DropZoneCoordinate;
+	isEditingText: boolean;
+	setIsEditingText: Action<FBEditor, boolean>;
 	createNewFrame: Action<FBEditor, { frame: FBFrameT, parentId: number, index: number }>;
 	editFrame: Action<FBEditor, FBFrameT>;
 	deleteFrame: Action<FBEditor, number>;
@@ -569,6 +571,10 @@ export const frameBasedEditor: FBEditor = {
 		createIf('True', 3, 1, 
 			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 3),])]),]),
 	focusedDropZoneCoords: { frameId: 0, index: 0 },
+	isEditingText: false,
+	setIsEditingText: action((state, isEditingText) => {
+		state.isEditingText = isEditingText;
+	}),
 	nextId: 5,
 	createNewFrame: action((state, { frame, parentId, index }) => {
 		createNewFrame(state, frame, parentId, index);
