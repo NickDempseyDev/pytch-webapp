@@ -5,7 +5,8 @@ export type ProjectTemplateKind =
   | "bare-bones"
   | "with-sample-code"
   | "bare-per-method"
-  | "simple-example-per-method";
+  | "simple-example-per-method"
+  | "bare-frame";
 
 export type WhetherExampleTag = "with-example" | "without-example";
 
@@ -33,6 +34,10 @@ export function templateKindFromComponents(
       return "bare-bones";
     case "without-example/per-method":
       return "bare-per-method";
+    case "without-example/per-method-frames":
+      return "bare-frame";
+      case "with-example/per-method-frames":
+        return "bare-frame";
     default:
       return assertNever(kind);
   }

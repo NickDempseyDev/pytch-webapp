@@ -846,3 +846,85 @@ $key-chooser-width: 54rem;
   @include full-height-grid-center-center;
   color: #444;
 }
+
+.frames-container {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  gap: 0.5rem;
+  background-color: #000;
+  z-index: 99;
+}
+
+.frame {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.2em;
+  border-radius: 0.2em;
+  font-weight: 600;
+}
+
+.frame-delete-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.child-frame {
+  display: flex;
+  flex-direction: column;
+  // gap: 0.5rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  // margin-bottom: 1rem;
+}
+
+.drop-zone {
+  background-color: transparent;
+  width: 100%;
+  height: 10px;
+}
+
+.drop-zone-active {
+  background-color: #1eff00;
+  width: 50%;
+  border-radius: 2rem;
+}
+
+.drop-zone-hover {
+  background-color: #ff9100;
+  border-radius: 2rem;
+  height: 40px;
+}
+
+.drop-zone-mouseover {
+  background-color: #00ff00;
+  border-radius: 2rem;
+}
+
+.dep-1 {
+  background-color: #9c9cff;
+}
+
+.dep-2 {
+  background-color: #ffffb0;
+}
+
+.dep-3 {
+  background-color: #00ffff;
+}
+
+.dep-4 {
+  background-color: #ff8aff;
+}
+
+.dep-5 {
+  background-color: #ffc285;
+}
+
+.dep-6 {
+  background-color: #ff91c8;
+}

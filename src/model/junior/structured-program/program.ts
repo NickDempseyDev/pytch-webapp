@@ -3,9 +3,13 @@ import { Uuid } from "./core-types";
 import { EventDescriptor, EventHandler, EventHandlerOps } from "./event";
 import { assertNever } from "../../../utils";
 import { IEmbodyContext, NoIdsStructuredProject } from "./skeleton";
+import { DropZoneCoordinate } from "../../frame-based";
+
+export type StructuredProgramType = "text" | "frames";
 
 export type StructuredProgram = {
   actors: Array<Actor>;
+  programType: StructuredProgramType;
 };
 
 // The layers of types are here because in the app's use-case, we want
@@ -70,7 +74,11 @@ export class StructuredProgramOps {
   /** Create and return a new `StructuredProgram` containing just an
    * empty Stage. */
   static newEmpty(): StructuredProgram {
-    return { actors: [ActorOps.newEmptyStage()] };
+    return { actors: [ActorOps.newEmptyStage()], programType: "text" };
+  }
+
+  static newEmptyFrames(): StructuredProgram {
+    return { actors: [ActorOps.newEmptyStage()], programType: "frames" };
   }
 
   /** Create a new `StructuredProgram` containing a Stage and one
@@ -101,14 +109,14 @@ export class StructuredProgramOps {
     const actors = skeleton.actors.map((actor) =>
       ActorOps.fromSkeleton(actor, embodyContext)
     );
-    return { actors };
+    return { actors, programType: "text" };
   }
 
   /** Return the unique `Actor` with the given `actorId` in the given
    * `program`.  Throw an error if there is not exactly one such
    * `Actor`.  */
   static uniqueActorById(program: StructuredProgram, actorId: Uuid): Actor {
-    const matchingActors = program.actors.filter((a) => a.id === actorId);
+    const matchingActors = program.actors.filter((a) => a.id === actorId);    
     const nMatching = matchingActors.length;
 
     if (nMatching !== 1)
@@ -275,6 +283,7 @@ export class StructuredProgramOps {
     switch (action.kind) {
       case "insert": {
         const handler = EventHandlerOps.newWithEmptyCode(eventDescriptor);
+        actor.currentlyFocusedDropzone = {handlerId: handler.id, frameId: 0, index: 0};
         ActorOps.appendHandler(actor, handler);
         return handler.id;
       }

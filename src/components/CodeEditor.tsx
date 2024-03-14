@@ -28,8 +28,8 @@ const ReadOnlyOverlay = () => {
     syncState.loadState === "pending"
       ? "Loading..."
       : syncState.saveState === "pending"
-      ? "Saving..."
-      : null;
+        ? "Saving..."
+        : null;
 
   if (maybeMessage != null) {
     return (

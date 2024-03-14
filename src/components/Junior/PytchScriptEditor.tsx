@@ -28,6 +28,9 @@ import {
 import PytchScriptPreview from "../../images/drag-preview-event-handler.png";
 import { DragPreviewImage } from "react-dnd";
 import { useNotableChanges } from "../hooks/notable-changes";
+import { DropZoneCoordinate, FBFrameT, FocusedDropZoneUpdateDescriptor, FrameDeleteDescriptor, FrameMoveDescriptor, FrameUpdateDescriptor } from "../../model/frame-based";
+import { ActionCreator, ThunkCreator } from "easy-peasy";
+import BaseFrame from "./frame-based-editor/BaseFrame";
 
 // Adapted from https://stackoverflow.com/a/71952718
 const insertElectricFullStop = (editor: AceEditorT) => {
@@ -39,15 +42,31 @@ type PytchScriptEditorProps = {
   actorKind: ActorKind;
   actorId: Uuid;
   handlerId: Uuid;
+  isFrames: boolean;
   prevHandlerId: Uuid | null;
   nextHandlerId: Uuid | null;
+  baseFrame: FBFrameT;
+  moveFrame: ThunkCreator<FrameMoveDescriptor, any>;
+  editFrame: ThunkCreator<FrameUpdateDescriptor, any>;
+  deleteFrame: ThunkCreator<FrameDeleteDescriptor, any>;
+  applyFocus: ActionCreator<FocusedDropZoneUpdateDescriptor>;
+  focusedDropZoneCoords: DropZoneCoordinate;
+  setIsEditingText: ActionCreator<boolean>;
 };
 export const PytchScriptEditor: React.FC<PytchScriptEditorProps> = ({
   actorKind,
   actorId,
   handlerId,
+  isFrames,
   prevHandlerId,
   nextHandlerId,
+  baseFrame,
+  moveFrame,
+  editFrame,
+  deleteFrame,
+  applyFocus,
+  focusedDropZoneCoords,
+  setIsEditingText
 }) => {
   const [dragProps, dragRef, preview] = usePytchScriptDrag(handlerId);
   const [dropProps, dropRef] = usePytchScriptDrop(actorId, handlerId);
@@ -160,7 +179,7 @@ export const PytchScriptEditor: React.FC<PytchScriptEditorProps> = ({
         <div className="drag-masked-editor">
           <div ref={aceParentRef}>
             <div className="hat-code-spacer" />
-            <AceEditor
+            {!isFrames && <AceEditor
               mode="python"
               theme="github"
               enableBasicAutocompletion={completers}
@@ -174,7 +193,18 @@ export const PytchScriptEditor: React.FC<PytchScriptEditorProps> = ({
               height="100%"
               minLines={nCodeLines}
               maxLines={nCodeLines}
-            />
+            />}
+            {isFrames && <BaseFrame
+              handlerId={handlerId}
+              actorId={actorId}
+              baseFrame={baseFrame}
+              moveFrame={moveFrame}
+              editFrame={editFrame}
+              deleteFrame={deleteFrame}
+              applyFocus={applyFocus}
+              focusedDropZoneCoords={focusedDropZoneCoords}
+              setIsEditingText={setIsEditingText}
+            />}
           </div>
           <div className="drag-mask" />
         </div>

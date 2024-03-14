@@ -11,6 +11,7 @@ import { useStoreActions, useStoreState } from "../../store";
 import { AssetImageThumbnail } from "../AssetImageThumbnail";
 import { AddSomethingSingleButton } from "./AddSomethingButton";
 import {
+  useFramesProgram,
   useJrEditActions,
   useJrEditState,
   useMappedProgram,
@@ -41,7 +42,7 @@ const ActorThumbnail: React.FC<ActorThumbnailProps> = ({ id }) => {
   if (maybeFirstImage.presentation.kind !== "image") {
     throw new Error(
       "expecting an image but presentation is of kind " +
-        `"${maybeFirstImage.presentation.kind}"`
+      `"${maybeFirstImage.presentation.kind}"`
     );
   }
 
@@ -163,7 +164,18 @@ const ActorCard: React.FC<ActorCardProps> = ({ isFocused, kind, id, name }) => {
 };
 
 export const ActorsList = () => {
-  const program = useStructuredProgram();
+  const programKind = useStoreState(
+    (state) => state.activeProject.project.program.kind
+  );
+
+  let program;
+
+  if (programKind === "per-method") {
+    program = useStructuredProgram();
+  } else {
+    program = useFramesProgram();
+  }
+
   const focusedActor = useJrEditState((s) => s.focusedActor);
 
   const launchAddSpriteModalAction = useJrEditActions(

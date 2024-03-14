@@ -43,6 +43,8 @@ const IDEContents: React.FC<EmptyProps> = () => {
       return <IDEContents_Flat />;
     case "per-method":
       return <IDEContents_Junior />;
+    case "per-method-frames":
+      return <IDEContents_Junior />;
     default:
       return assertNever(programKind);
   }

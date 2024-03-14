@@ -1,5 +1,5 @@
 import { State, Actions } from "easy-peasy";
-import { PytchProgramOps } from "../../model/pytch-program";
+import { PytchProgramOfKind, PytchProgramOps } from "../../model/pytch-program";
 import { useStoreActions, useStoreState } from "../../store";
 import { useDrag, useDrop } from "react-dnd";
 
@@ -18,6 +18,13 @@ export const useStructuredProgram = () =>
         state.activeProject.project.program,
         "per-method"
       ).program
+  );
+
+  // TODO: Also temporary to get demo working
+export const useFramesProgram = () =>
+  useStoreState(
+    (state) =>
+      (state.activeProject.project.program as PytchProgramOfKind<"per-method">).program
   );
 
 type JrEditStateMapper<R> = (state: State<EditState>) => R;
@@ -44,11 +51,14 @@ export function useMappedProgram<R>(
   equalityFn?: (prev: R, next: R) => boolean
 ) {
   return useStoreState((state) => {
-    const program = PytchProgramOps.ensureKind(
-      label,
-      state.activeProject.project.program,
-      "per-method"
-    );
+    // TODO: COMMENTED OUT TO GET FRAMES INTEGRATED FOR DEMO
+    // const program = PytchProgramOps.ensureKind(
+    //   label,
+    //   state.activeProject.project.program,
+    //   "per-method"
+    // );
+    const program = state.activeProject.project.program as PytchProgramOfKind<"per-method">;
+    
     return mapProgram(program.program);
   }, equalityFn);
 }

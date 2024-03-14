@@ -1,6 +1,7 @@
 import { assertNever } from "../../../utils";
 import { Uuid, UuidOps } from "./core-types";
 import { NoIdEventHandler } from "./skeleton";
+import { FBFrameT, createNOP } from "../../frame-based";
 
 export type EventDescriptor =
   | { kind: "green-flag" }
@@ -78,13 +79,14 @@ export type EventHandler = {
   id: Uuid;
   event: EventDescriptor;
   pythonCode: string;
+  baseFrame: FBFrameT;
 };
 
 export class EventHandlerOps {
   /** Return a new `EventHandler` with the given `event` descriptor and
    * with the empty string as its Python code. */
   static newWithEmptyCode(event: EventDescriptor): EventHandler {
-    return { id: UuidOps.newRandom(), event, pythonCode: "" };
+    return { id: UuidOps.newRandom(), event, pythonCode: "", baseFrame: createNOP(0, 0, []) };
   }
 
   /** Return a new `EventHandler` with a random `id` whose `event` and

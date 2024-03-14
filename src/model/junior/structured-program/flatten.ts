@@ -1,5 +1,6 @@
 // Conversion of structured program into flat Python code.
 
+import { FrameBasedStructuredProgramOps } from "../../frame-based";
 import { Actor, ActorKindOps } from "./actor";
 import { AssetMetaData, AssetMetaDataOps } from "./asset";
 import { EventDescriptorOps } from "./event";
@@ -28,7 +29,8 @@ const pushActorLines = (
   lines: Array<string>,
   mapEntries: Array<SourceMapEntry>,
   actor: Actor,
-  allAssets: Array<AssetMetaData>
+  allAssets: Array<AssetMetaData>,
+  isFrames: boolean
 ): void => {
   const kindNames = ActorKindOps.names(actor.kind);
 
@@ -63,7 +65,14 @@ const pushActorLines = (
       startLine: lines.length,
     });
 
-    const pythonLines = h.pythonCode.split("\n");
+    let pythonLines = null;
+
+    if (isFrames) {
+      pythonLines = FrameBasedStructuredProgramOps.printCodeRecursive(h.baseFrame).split("\n");
+    } else {
+      pythonLines = h.pythonCode.split("\n");
+    }
+    
     pythonLines.forEach((x) => {
       lines.push(`        ${x}`);
     });
@@ -84,7 +93,21 @@ export const flattenProgram = (
 
   let mapEntries: Array<SourceMapEntry> = [];
 
-  program.actors.forEach((a) => pushActorLines(lines, mapEntries, a, assets));
+  program.actors.forEach((a) => pushActorLines(lines, mapEntries, a, assets, false));
+  const codeText = lines.join("\n");
+
+  return { codeText, mapEntries };
+};
+
+export const flattenProgramFrames = (
+  program: StructuredProgram,
+  assets: Array<AssetMetaData>
+): FlattenResults => {
+  let lines = ["import pytch", "import random", "import math"];
+
+  let mapEntries: Array<SourceMapEntry> = [];
+
+  program.actors.forEach((a) => pushActorLines(lines, mapEntries, a, assets, true));
   const codeText = lines.join("\n");
 
   return { codeText, mapEntries };

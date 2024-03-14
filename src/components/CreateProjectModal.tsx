@@ -123,6 +123,12 @@ export const CreateProjectModal = () => {
                 label="Edit as one big program"
                 setActive={setEditorKind}
               />
+              <EditorKindOption
+                thisOption="per-method-frames"
+                activeOption={editorKind}
+                label="Frames Editor"
+                setActive={setEditorKind}
+              />
             </div>
             <div className="editor-thumbnail">
               <img src={editorKindThumbnail} />

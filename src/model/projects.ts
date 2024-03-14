@@ -182,6 +182,15 @@ export const projectCollection: IProjectCollection = {
             assets: [{ urlBasename: "solid-white.png", customLocalName }],
           };
         }
+        case "bare-frame": {
+          const structuredProgram = StructuredProgramOps.newEmptyFrames();
+          const stageId = structuredProgram.actors[0].id;
+          const customLocalName = `${stageId}/solid-white.png`;
+          return {
+            program: {kind: "per-method-frames", program: structuredProgram },
+            assets: [{ urlBasename: "solid-white.png", customLocalName }],
+          };
+        }
         case "simple-example-per-method": {
           const structuredProgram = StructuredProgramOps.newSimpleExample();
           const stageId = structuredProgram.actors[0].id;

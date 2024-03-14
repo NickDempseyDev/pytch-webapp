@@ -4,6 +4,7 @@ import {
   FlattenResults,
   flattenProgram,
 } from "./junior/structured-program";
+import { flattenProgramFrames } from "./junior/structured-program/flatten";
 import {
   StructuredProgram,
   StructuredProgramOps,
@@ -22,13 +23,15 @@ const validatePytchProgramJson = _untypedValidate as any;
 
 export type PytchProgram =
   | { kind: "flat"; text: string }
-  | { kind: "per-method"; program: StructuredProgram };
+  | { kind: "per-method"; program: StructuredProgram }
+  | { kind: "per-method-frames"; program: StructuredProgram };
 
 export type PytchProgramKind = PytchProgram["kind"];
 
 export const PytchProgramAllKinds: Array<PytchProgramKind> = [
   "flat",
   "per-method",
+  "per-method-frames",
 ];
 
 export type PytchProgramOfKind<KindT extends PytchProgram["kind"]> =
@@ -43,6 +46,7 @@ export class PytchProgramOps {
 
   static newEmpty(kind: "flat"): PytchProgramOfKind<"flat">;
   static newEmpty(kind: "per-method"): PytchProgramOfKind<"per-method">;
+  static newEmpty(kind: "per-method-frames"): PytchProgramOfKind<"per-method-frames">;
   static newEmpty(kind: PytchProgramKind) {
     switch (kind) {
       case "flat":
@@ -50,6 +54,8 @@ export class PytchProgramOps {
         return { kind, text: "import pytch\n\n" };
       case "per-method":
         return { kind, program: StructuredProgramOps.newEmpty() };
+      case "per-method-frames":
+        return { kind, program: StructuredProgramOps.newEmptyFrames() };
       default:
         return assertNever(kind);
     }
@@ -71,6 +77,9 @@ export class PytchProgramOps {
         return { codeText: program.text, mapEntries: [] };
       case "per-method": {
         return flattenProgram(program.program, assets);
+      }
+      case "per-method-frames": {
+        return flattenProgramFrames(program.program, assets);
       }
       default:
         return assertNever(program);
@@ -106,6 +115,10 @@ export class PytchProgramOps {
       case "per-method":
         throw new Error(
           'fingerprint() for "per-method" programs not yet implemented'
+        );
+      case "per-method-frames":
+        throw new Error(
+          'fingerprint() for "per-method-frames" programs not yet implemented'
         );
       default:
         return assertNever(program);

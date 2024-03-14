@@ -1,6 +1,7 @@
 import { Uuid } from "./core-types";
 import { ActorKind } from "./actor";
 import { EventDescriptor } from "./event";
+import { FBFrameT } from "../../frame-based";
 
 export type AssetDescriptor = {
   fileBasename: string;
@@ -9,6 +10,7 @@ export type AssetDescriptor = {
 export type NoIdEventHandler = {
   event: EventDescriptor;
   pythonCode: string;
+  baseFrame: FBFrameT;
 };
 
 export type NoIdActor = {

@@ -2,6 +2,7 @@ import { Uuid, UuidOps } from "./core-types";
 import { EventHandler, EventHandlerOps } from "./event";
 import { assertNever } from "../../../utils";
 import { IEmbodyContext, NoIdActor } from "./skeleton";
+import { DropZoneCoordinate } from "../../frame-based";
 
 export type ActorKind = "sprite" | "stage";
 
@@ -54,6 +55,9 @@ export type Actor = {
   kind: ActorKind;
   name: string;
   handlers: Array<EventHandler>;
+  nextFrameId: number;
+  currentlyFocusedDropzone: DropZoneCoordinate;
+  isEditingText: boolean;
 };
 
 export class ActorOps {
@@ -65,6 +69,9 @@ export class ActorOps {
       kind: "stage",
       name: "Stage",
       handlers: [],
+      nextFrameId: 1,
+      currentlyFocusedDropzone: { handlerId: '', frameId: 0, index: 0},
+      isEditingText: false,
     };
   }
 
@@ -76,6 +83,9 @@ export class ActorOps {
       kind: "sprite",
       name,
       handlers: [],
+      nextFrameId: 1,
+      currentlyFocusedDropzone: { handlerId: '', frameId: 0, index: 0},
+      isEditingText: false,
     };
   }
 
@@ -96,7 +106,7 @@ export class ActorOps {
     noIdActor.assets.forEach((asset) => {
       embodyContext.registerActorAsset(id, asset.fileBasename);
     });
-    return { id, kind, name, handlers };
+    return { id, kind, name, handlers, nextFrameId: 1, currentlyFocusedDropzone: { handlerId: '', frameId: 0, index: 0}, isEditingText: false };
   }
 
   /** Return the index into the `handlers` of the given `actor` of the

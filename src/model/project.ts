@@ -60,7 +60,7 @@ import { liveReloadURL } from "./live-reload";
 import { fireAndForgetEvent } from "./anonymous-instrumentation";
 
 import { getFlatAceController } from "../skulpt-connection/code-editor";
-import { PytchProgramKind, PytchProgramOps } from "./pytch-program";
+import { PytchProgramKind, PytchProgramOfKind, PytchProgramOps } from "./pytch-program";
 import { Uuid } from "./junior/structured-program/core-types";
 import {
   HandlerDeletionDescriptor,
@@ -72,7 +72,7 @@ import {
   StructuredProgramOps,
 } from "./junior/structured-program/program";
 import { AssetOperationContext } from "./asset";
-import { AssetMetaDataOps } from "./junior/structured-program";
+import { ActorOps, AssetMetaDataOps } from "./junior/structured-program";
 import {
   JrTutorialContent,
   LinkedJrTutorial,
@@ -85,6 +85,7 @@ import {
   NotableChangesManager,
   NotableChangesManagerOps,
 } from "./notable-changes";
+import { DropZoneCoordinate, FocusedDropZoneUpdateDescriptor, FrameBasedStructuredProgramOps, FrameCreateDescriptor, FrameDeleteDescriptor, FrameMoveDescriptor, FrameUpdateDescriptor } from "./frame-based";
 
 const ensureKind = PytchProgramOps.ensureKind;
 
@@ -399,6 +400,19 @@ export interface IActiveProject {
   nPendingSyncActions: number;
   pendingSyncActionsExist: Computed<IActiveProject, boolean>;
   increaseNPendingSyncActions: Action<IActiveProject, number>;
+
+  ////////////////////////////////////////////////////////////////////////
+  // frame-based stuff
+  _editFrame: Action<IActiveProject, FrameUpdateDescriptor>;
+  editFrame: Thunk<IActiveProject, FrameUpdateDescriptor>;
+  _createFrame: Action<IActiveProject, FrameCreateDescriptor>;
+  createFrame: Thunk<IActiveProject, FrameCreateDescriptor>;
+  _deleteFrame: Action<IActiveProject, FrameDeleteDescriptor>;
+  deleteFrame: Thunk<IActiveProject, FrameDeleteDescriptor>;
+  _moveFrame: Action<IActiveProject, FrameMoveDescriptor>;
+  moveFrame: Thunk<IActiveProject, FrameMoveDescriptor>;
+  setFocusedDropDownCoords: Action<IActiveProject, FocusedDropZoneUpdateDescriptor>;
+  setIsEditingText: Action<IActiveProject, boolean>;
 }
 
 const dummyPytchProgram = PytchProgramOps.fromPythonCode(
@@ -447,6 +461,37 @@ function notingCodeChange<ArgT, MapResultT extends (arg: ArgT) => void>(
 }
 
 export const activeProject: IActiveProject = {
+  setIsEditingText: action((state, isEditingText) => {
+    const program = state.project.program as PytchProgramOfKind<"per-method">;
+    program.program.actors.forEach((actor) => {
+      actor.isEditingText = isEditingText;
+    });
+  }),
+  _createFrame: action((state, updateDescriptor) => {
+    const program = (state.project.program as PytchProgramOfKind<"per-method">).program;
+    FrameBasedStructuredProgramOps.createFrame(program, updateDescriptor);
+  }),
+  createFrame: notingCodeChange((a) => a._createFrame),
+  _deleteFrame: action((state, updateDescriptor) => {
+    const program = (state.project.program as PytchProgramOfKind<"per-method">).program;
+    FrameBasedStructuredProgramOps.deleteFrame(program, updateDescriptor);
+  }),
+  deleteFrame: notingCodeChange((a) => a._deleteFrame),
+  _moveFrame: action((state, updateDescriptor) => {
+    const program = (state.project.program as PytchProgramOfKind<"per-method">).program;
+    FrameBasedStructuredProgramOps.moveFrame(program, updateDescriptor);
+  }),
+  moveFrame: notingCodeChange((a) => a._moveFrame),
+  _editFrame: action((state, updateDescriptor) => {
+    const program = (state.project.program as PytchProgramOfKind<"per-method">).program;
+    FrameBasedStructuredProgramOps.editFrame(program, updateDescriptor);
+  }),
+  editFrame: notingCodeChange((a) => a._editFrame),
+  setFocusedDropDownCoords: action((state, coordsUpdate) => {
+    const program = state.project.program as PytchProgramOfKind<"per-method">;
+    const actor = StructuredProgramOps.uniqueActorById(program.program, coordsUpdate.actorId);
+    actor.currentlyFocusedDropzone = coordsUpdate.newDropZone;
+  }),
   changesManager: NotableChangesManagerOps.make(),
   _noteChange: action((state, args) => {
     const changeId = NotableChangesManagerOps.addChange(
@@ -567,7 +612,8 @@ export const activeProject: IActiveProject = {
   }),
 
   _upsertHandler: action((state, upsertionAugArgs) => {
-    let program = ensureStructured(state.project, "upsertHandler");
+    // let program = ensureStructured(state.project, "upsertHandler");
+    let program = (state.project.program as PytchProgramOfKind<"per-method">).program;
     const descriptor = upsertionAugArgs.descriptor;
     const handlerId = StructuredProgramOps.upsertHandler(program, descriptor);
     upsertionAugArgs.handleHandlerId(handlerId);
@@ -817,7 +863,8 @@ export const activeProject: IActiveProject = {
 
       storeActions.ideLayout.helpSidebar.hideAllContent();
 
-      if (content.program.kind === "per-method") {
+      // TODO: Added to get frame demo working
+      if (content.program.kind === "per-method" || content.program.kind === "per-method-frames") {
         const bootData = {
           program: content.program.program,
           linkedContentKind: content.linkedContentRef.kind,
@@ -1110,6 +1157,14 @@ export const activeProject: IActiveProject = {
             actions.setLinkedLessonContent(newContent);
             break;
           }
+          case "per-method-frames":
+            const newContent = jrTutorialContentFromHTML(
+              message.tutorial_name,
+              message.text,
+              "LIVE-RELOAD-MESSAGE"
+            );
+            actions.setLinkedLessonContent(newContent);
+            break;
           default:
             assertNever(programKind);
         }
