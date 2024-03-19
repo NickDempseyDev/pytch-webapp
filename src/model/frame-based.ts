@@ -66,7 +66,74 @@ export type FBClassDefinitionT = {
 	parameters: string[];
 } & FBBaseFrameT;
 
-export type FBFrameT = FBNOPT | FBExpressionT | FBIfT | FBWhileT | FBForT | FBAssignmentT | FBCommentT | FBFunctionDefinitionT | FBFunctionCallT | FBClassDefinitionT;
+export type FBPytchKeyPressedT = {
+	key: string;
+} & FBBaseFrameT;
+
+export type FBPytchChangeXT = {
+	amount: number;
+} & FBBaseFrameT;
+
+export type FBPytchChangeYT = {
+	amount: number;
+} & FBBaseFrameT;
+
+export type FBPytchGoToT = {
+	x: number;
+	y: number;
+} & FBBaseFrameT;
+
+export type FBPytchShowT = {
+} & FBBaseFrameT;
+
+export type FBPytchHideT = {
+} & FBBaseFrameT;
+
+export type FBPytchTouchingT = {
+	object: string;
+} & FBBaseFrameT;
+
+export type FBPytchBroadcastT = {
+	message: string;
+} & FBBaseFrameT;
+
+export type FBPytchYPosT = {
+} & FBBaseFrameT;
+
+export type FBPytchXPosT = {
+} & FBBaseFrameT;
+
+export type FBPytchSayT = {
+	message: string;
+} & FBBaseFrameT;
+
+export type FBPytchBroadcastAndWaitT = {
+	message: string;
+} & FBBaseFrameT;
+
+export type FBFrameT = 
+FBNOPT | 
+FBExpressionT | 
+FBIfT | 
+FBWhileT | 
+FBForT | 
+FBAssignmentT | 
+FBCommentT | 
+FBFunctionDefinitionT | 
+FBFunctionCallT | 
+FBClassDefinitionT | 
+FBPytchKeyPressedT |
+FBPytchChangeXT |
+FBPytchChangeYT |
+FBPytchGoToT |
+FBPytchShowT |
+FBPytchHideT |
+FBPytchTouchingT |
+FBPytchBroadcastT |
+FBPytchYPosT |
+FBPytchXPosT |
+FBPytchSayT |
+FBPytchBroadcastAndWaitT;
 
 export const createNOP = (id: number, depth: number, children: FBFrameT[]): FBNOPT => {
 	return {
