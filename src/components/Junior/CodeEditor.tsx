@@ -268,7 +268,6 @@ const ScriptsEditor = () => {
     }
   }
 
-
   // The "pb-5" adds padding below; without this, the above scroll
   // didn't scroll quite to the bottom.  I didn't get to the bottom of
   // this, and adding padding was an easy workaround.
