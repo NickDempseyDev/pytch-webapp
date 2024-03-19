@@ -12,6 +12,18 @@ export enum FBTypes {
 	FUNCTION_DEFINITION,
 	FUNCTION_CALL,
 	CLASS_DEFINITION,
+	PYTCH_KEY_PRESSED,
+	PYTCH_CHANGE_X,
+	PYTCH_CHANGE_Y,
+	PYTCH_GO_TO,
+	PYTCH_SHOW,
+	PYTCH_HIDE,
+	PYTCH_TOUCHING,
+	PYTCH_BROADCAST,
+	PYTCH_Y_POS,
+	PYTCH_X_POS,
+	PYTCH_SAY,
+	PYTCH_BROADCAST_AND_WAIT
 }
 
 type FBBaseFrameT = {
@@ -134,6 +146,147 @@ FBPytchYPosT |
 FBPytchXPosT |
 FBPytchSayT |
 FBPytchBroadcastAndWaitT;
+
+export const createPytchKeyPressed = (key: string, id: number, depth: number): FBPytchKeyPressedT => {
+	return {
+		type: FBTypes.PYTCH_KEY_PRESSED,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		key
+	}
+}
+
+export const createPytchChangeX = (amount: number, id: number, depth: number): FBPytchChangeXT => {
+	return {
+		type: FBTypes.PYTCH_CHANGE_X,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		amount
+	}
+}
+
+export const createPytchChangeY = (amount: number, id: number, depth: number): FBPytchChangeYT => {
+	return {
+		type: FBTypes.PYTCH_CHANGE_Y,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		amount
+	}
+}
+
+export const createPytchGoTo = (x: number, y: number, id: number, depth: number): FBPytchGoToT => {
+	return {
+		type: FBTypes.PYTCH_GO_TO,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		x,
+		y
+	}
+}
+
+export const createPytchShow = (id: number, depth: number): FBPytchShowT => {
+	return {
+		type: FBTypes.PYTCH_SHOW,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false
+	}
+}
+
+export const createPytchHide = (id: number, depth: number): FBPytchHideT => {
+	return {
+		type: FBTypes.PYTCH_HIDE,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false
+	}
+}
+
+export const createPytchTouching = (object: string, id: number, depth: number): FBPytchTouchingT => {
+	return {
+		type: FBTypes.PYTCH_TOUCHING,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		object
+	}
+}
+
+export const createPytchBroadcast = (message: string, id: number, depth: number): FBPytchBroadcastT => {
+	return {
+		type: FBTypes.PYTCH_BROADCAST,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		message
+	}
+}
+
+export const createPytchYPos = (id: number, depth: number): FBPytchYPosT => {
+	return {
+		type: FBTypes.PYTCH_Y_POS,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false
+	}
+}
+
+export const createPytchXPos = (id: number, depth: number): FBPytchXPosT => {
+	return {
+		type: FBTypes.PYTCH_X_POS,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false
+	}
+}
+
+export const createPytchSay = (message: string, id: number, depth: number): FBPytchSayT => {
+	return {
+		type: FBTypes.PYTCH_SAY,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		message
+	}
+}
+
+export const createPytchBroadcastAndWait = (message: string, id: number, depth: number): FBPytchBroadcastAndWaitT => {
+	return {
+		type: FBTypes.PYTCH_BROADCAST_AND_WAIT,
+		id,
+		depth,
+		canHaveChildren: false,
+		children: [],
+		hasFocus: false,
+		message
+	}
+}
 
 export const createNOP = (id: number, depth: number, children: FBFrameT[]): FBNOPT => {
 	return {
@@ -320,11 +473,95 @@ const extractTextualPython = (frames: FBFrameT[], indentation: number): string =
 			case FBTypes.EXPRESSION:
 				result += extractTextualPythonFromExpressionFrame(frames[i] as FBExpressionT, indentation);
 				break;
+			case FBTypes.PYTCH_KEY_PRESSED:
+				result += extractTextualPythonFromPythchKeyPressedFrame(frames[i] as FBPytchKeyPressedT);
+				break;
+			case FBTypes.PYTCH_CHANGE_X:
+				result += extractTextualPythonFromPytchChangeXTFrame(frames[i] as FBPytchChangeXT);
+				break;
+			case FBTypes.PYTCH_CHANGE_Y:
+				result += extractTextualPythonFromPytchChangeYTFrame(frames[i] as FBPytchChangeYT);
+				break;
+			case FBTypes.PYTCH_GO_TO:
+				result += extractTextualPythonFromPytchGoToTFrame(frames[i] as FBPytchGoToT);
+				break;
+			case FBTypes.PYTCH_SHOW:
+				result += extractTextualPythonFromPytchShowTFrame(frames[i] as FBPytchShowT);
+				break;
+			case FBTypes.PYTCH_HIDE:
+				result += extractTextualPythonFromPytchHideTFrame(frames[i] as FBPytchHideT);
+				break;
+			case FBTypes.PYTCH_TOUCHING:
+				result += extractTextualPythonFromPytchTouchingTFrame(frames[i] as FBPytchTouchingT);
+				break;
+			case FBTypes.PYTCH_BROADCAST:
+				result += extractTextualPythonFromPytchBroadcastTFrame(frames[i] as FBPytchBroadcastT);
+				break;
+			case FBTypes.PYTCH_Y_POS:
+				result += extractTextualPythonFromPytchYPosTFrame(frames[i] as FBPytchYPosT);
+				break;
+			case FBTypes.PYTCH_X_POS:
+				result += extractTextualPythonFromPytchXPosTFrame(frames[i] as FBPytchXPosT);
+				break;
+			case FBTypes.PYTCH_SAY:
+				result += extractTextualPythonFromPytchSayTFrame(frames[i] as FBPytchSayT);
+				break;
+			case FBTypes.PYTCH_BROADCAST_AND_WAIT:
+				result += extractTextualPythonFromPytchBroadcastAndWaitTFrame(frames[i] as FBPytchBroadcastAndWaitT);
+				break;
 		}
 		result+= '\n';
 	}
 
 	return result;
+}
+
+const extractTextualPythonFromPythchKeyPressedFrame = (frame: FBPytchKeyPressedT) => {
+	return `pytch.key_pressed("${frame.key}")\n`;
+}
+
+const extractTextualPythonFromPytchChangeXTFrame = (frame: FBPytchChangeXT) => {
+	return `self.change_x(${frame.amount})\n`;
+}
+
+const extractTextualPythonFromPytchChangeYTFrame = (frame: FBPytchChangeYT) => {
+	return `self.change_y(${frame.amount})\n`;
+}
+
+const extractTextualPythonFromPytchGoToTFrame = (frame: FBPytchGoToT) => {
+	return `self.go_to(${frame.x}, ${frame.y})\n`;
+}
+
+const extractTextualPythonFromPytchShowTFrame = (frame: FBPytchShowT) => {
+	return `self.show()\n`;
+}
+
+const extractTextualPythonFromPytchHideTFrame = (frame: FBPytchHideT) => {
+	return `self.hide()\n`;
+}
+
+const extractTextualPythonFromPytchTouchingTFrame = (frame: FBPytchTouchingT) => {
+	return `self.touching(${frame.object})\n`;
+}
+
+const extractTextualPythonFromPytchBroadcastTFrame = (frame: FBPytchBroadcastT) => {
+	return `pytch.broadcast("${frame.message}")\n`;
+}
+
+const extractTextualPythonFromPytchYPosTFrame = (frame: FBPytchYPosT) => {
+	return `self.y_pos\n`;
+}
+
+const extractTextualPythonFromPytchXPosTFrame = (frame: FBPytchXPosT) => {
+	return `self.x_pos\n`;
+}
+
+const extractTextualPythonFromPytchSayTFrame = (frame: FBPytchSayT) => {
+	return `self.say("${frame.message}")\n`;
+}
+
+const extractTextualPythonFromPytchBroadcastAndWaitTFrame = (frame: FBPytchBroadcastAndWaitT) => {
+	return `pytch.broadcast_and_wait("${frame.message}")\n`;
 }
 
 const extractTextualPythonFromIfFrame = (frame: FBIfT, indentation: number) => {	

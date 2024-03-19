@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrag } from 'react-dnd';
-import { FBFrameT, FBTypes, FBWhileT, FBForT, FBAssignmentT, FBClassDefinitionT, FBCommentT, FBExpressionT, FBFunctionCallT, FBFunctionDefinitionT, DropZoneCoordinate, FocusedDropZoneUpdateDescriptor, FrameMoveDescriptor, FrameUpdateDescriptor, FrameDeleteDescriptor } from "../../../model/frame-based";
+import { FBFrameT, FBTypes, FBWhileT, FBForT, FBAssignmentT, FBClassDefinitionT, FBCommentT, FBExpressionT, FBFunctionCallT, FBFunctionDefinitionT, DropZoneCoordinate, FocusedDropZoneUpdateDescriptor, FrameMoveDescriptor, FrameUpdateDescriptor, FrameDeleteDescriptor, FBPytchBroadcastT, FBPytchGoToT, FBPytchSayT, FBPytchChangeXT, FBPytchChangeYT, FBPytchXPosT, FBPytchBroadcastAndWaitT, FBPytchTouchingT, FBPytchKeyPressedT } from "../../../model/frame-based";
 import IfFrame from './frames/IfFrame';
 import { FBIfT } from '../../../model/frame-based';
 import DropZone from './DropZone';
@@ -15,6 +15,18 @@ import FunctionDefinitionFrame from './frames/FunctionDefinitionFrame';
 import { Uuid } from '../../../model/junior/structured-program';
 import { ThunkCreator, ActionCreator } from 'easy-peasy';
 import { CloseButton } from 'react-bootstrap';
+import BroadcastFrame from './frames/pytch/BroadcastFrame';
+import GoToFrame from './frames/pytch/GoToFrame';
+import SayFrame from './frames/pytch/SayFrame';
+import ChangeXFrame from './frames/pytch/ChangeXFrame';
+import ChangeYFrame from './frames/pytch/ChangeYFrame';
+import XPosFrame from './frames/pytch/XPosFrame';
+import YPosFrame from './frames/pytch/YPosFrame';
+import BroadcastAndWaitFrame from './frames/pytch/BroadcastAndWaitFrame';
+import ShowFrame from './frames/pytch/ShowFrame';
+import HideFrame from './frames/pytch/HideFrame';
+import TouchingFrame from './frames/pytch/TouchingFrame';
+import KeyPressedFrame from './frames/pytch/KeyPressedFrame';
 
 type FrameProps = {
   frame: FBFrameT;
@@ -49,6 +61,18 @@ const Frame: React.FC<FrameProps> = ({ actorId, handlerId, frame, moveFrame, edi
       [FBTypes.EXPRESSION]: <ExpressionFrame frame={frame as FBExpressionT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
       [FBTypes.FUNCTION_CALL]: <FunctionCallFrame frame={frame as FBFunctionCallT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
       [FBTypes.FUNCTION_DEFINITION]: <FunctionDefinitionFrame frame={frame as FBFunctionDefinitionT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_BROADCAST]: <BroadcastFrame frame={frame as FBPytchBroadcastT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_GO_TO]: <GoToFrame frame={frame as FBPytchGoToT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_SAY]: <SayFrame frame={frame as FBPytchSayT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_CHANGE_X]: <ChangeXFrame frame={frame as FBPytchChangeXT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_CHANGE_Y]: <ChangeYFrame frame={frame as FBPytchChangeYT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_X_POS]: <XPosFrame />,
+      [FBTypes.PYTCH_Y_POS]: <YPosFrame />,
+      [FBTypes.PYTCH_BROADCAST_AND_WAIT]: <BroadcastAndWaitFrame frame={frame as FBPytchBroadcastAndWaitT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_SHOW]: <ShowFrame />,
+      [FBTypes.PYTCH_HIDE]: <HideFrame />,
+      [FBTypes.PYTCH_TOUCHING]: <TouchingFrame frame={frame as FBPytchTouchingT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
+      [FBTypes.PYTCH_KEY_PRESSED]: <KeyPressedFrame frame={frame as FBPytchKeyPressedT} editFrame={editFrame} setIsEditingText={setIsEditingText} actorId={actorId} handlerId={handlerId} />,
       [FBTypes.NOP]: <div></div>
     };
 

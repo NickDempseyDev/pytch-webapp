@@ -18,7 +18,7 @@ import { AddSomethingSingleButton } from "./AddSomethingButton";
 import { EmptyProps, PYTCH_CYPRESS } from "../../utils";
 import { aceControllerMap } from "../../skulpt-connection/code-editor";
 import { useNotableChanges } from "../hooks/notable-changes";
-import { FBFrameT, FrameBasedStructuredProgramOps, createAssignment, createComment, createExpression, createFor, createIf, createWhile, findFrame } from "../../model/frame-based";
+import { FBFrameT, FrameBasedStructuredProgramOps, createAssignment, createComment, createExpression, createFor, createIf, createPytchBroadcast, createPytchBroadcastAndWait, createPytchChangeX, createPytchChangeY, createPytchGoTo, createPytchHide, createPytchSay, createPytchShow, createPytchTouching, createWhile, findFrame } from "../../model/frame-based";
 
 const AddHandlerButton: React.FC<EmptyProps> = () => {
   const focusedActorId = useJrEditState((s) => s.focusedActor);
@@ -108,106 +108,180 @@ const ScriptsEditor = () => {
 
   const nHandlers = handlerIds.length;
 
+  const handleSingleKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case "ArrowUp":
+        const newCoords = FrameBasedStructuredProgramOps.getNextCoordUp(framesProgram, focusedDropZoneCoords, actorId);
+        if (newCoords) {
+          setFocusedDropDownCoords({ actorId: actorId, newDropZone: newCoords });
+        }
+        break;
+      case "ArrowDown":
+        const newCoordsDown = FrameBasedStructuredProgramOps.getNextCoordDown(framesProgram, focusedDropZoneCoords, actorId);
+        if (newCoordsDown) {
+          setFocusedDropDownCoords({ actorId: actorId, newDropZone: newCoordsDown });
+        }
+        break;
+      case "i":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newIf = createIf("", -1, parentFrame?.depth + 1, []);
+            createNewFrame(newIf)
+          }
+        }
+        break;
+      case "w":
+        if (focusedHandler) {
+          const parentFrameWhile = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrameWhile) {
+            const newWhile = createWhile("", -1, parentFrameWhile?.depth + 1, []);
+            createNewFrame(newWhile);
+          }
+        }
+        break;
+      case "a":
+        if (focusedHandler) {
+          const parentFrameAssignment = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrameAssignment) {
+            const newAssignment = createAssignment("", "", -1, parentFrameAssignment?.depth + 1);
+            createNewFrame(newAssignment);
+          }
+        }
+        break;
+      case "/":
+        if (focusedHandler) {
+          const parentFrameComment = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrameComment) {
+            const newComment = createComment("", -1, parentFrameComment?.depth + 1);
+            createNewFrame(newComment);
+          }
+        }
+        break;
+      case "e":
+        if (focusedHandler) {
+          const parentFrameExpression = findFrame(focusedHandler?.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrameExpression) {
+            const newExpression = createExpression("", -1, parentFrameExpression?.depth + 1);
+            createNewFrame(newExpression)
+          }
+        }
+        break;
+      case "f":
+        if (focusedHandler) {
+          const parentFrameFor = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrameFor) {
+            const newFor = createFor("", "", -1, parentFrameFor?.depth + 1, []);
+            createNewFrame(newFor);
+          }
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  const handleShiftKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case "B":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newBroadcase = createPytchBroadcast("", -1, parentFrame?.depth + 1);
+            createNewFrame(newBroadcase);
+          }
+        }
+        break;
+      case "G":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            console.log('G GOTO');
+
+            const newGoTo = createPytchGoTo(0, 0, -1, parentFrame?.depth + 1);
+            createNewFrame(newGoTo);
+          }
+        }
+        break;
+      case "X":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newChangeX = createPytchChangeX(0, -1, parentFrame?.depth + 1);
+            createNewFrame(newChangeX);
+          }
+        }
+        break;
+      case "Y":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newChangeY = createPytchChangeY(0, -1, parentFrame?.depth + 1);
+            createNewFrame(newChangeY);
+          }
+        }
+        break;
+      case "W":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newBroadcastAndWait = createPytchBroadcastAndWait("", -1, parentFrame?.depth + 1);
+            createNewFrame(newBroadcastAndWait);
+          }
+        }
+        break;
+      case "R":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newShow = createPytchShow(-1, parentFrame?.depth + 1);
+            createNewFrame(newShow);
+          }
+        }
+        break;
+      case "S":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newSay = createPytchSay("", -1, parentFrame?.depth + 1);
+            createNewFrame(newSay);
+          }
+        }
+        break;
+      case "H":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newHide = createPytchHide(-1, parentFrame?.depth + 1);
+          }
+        }
+        break;
+      case "T":
+        if (focusedHandler) {
+          const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
+          if (parentFrame) {
+            const newTouching = createPytchTouching("", -1, parentFrame?.depth + 1);
+            createNewFrame(newTouching);
+          }
+        }
+        break;
+    }
+  }
+
+
   // The "pb-5" adds padding below; without this, the above scroll
   // didn't scroll quite to the bottom.  I didn't get to the bottom of
   // this, and adding padding was an easy workaround.
   const handleKeyDown = (e: KeyboardEvent, isEditing: boolean) => {
     if (!isEditing) {
-      switch (e.key) {
-        case "ArrowUp":
-          const newCoords = FrameBasedStructuredProgramOps.getNextCoordUp(framesProgram, focusedDropZoneCoords, actorId);
-          if (newCoords) {
-            setFocusedDropDownCoords({ actorId: actorId, newDropZone: newCoords });
-          }
-          break;
-        case "ArrowDown":
-          const newCoordsDown = FrameBasedStructuredProgramOps.getNextCoordDown(framesProgram, focusedDropZoneCoords, actorId);
-          if (newCoordsDown) {
-            setFocusedDropDownCoords({ actorId: actorId, newDropZone: newCoordsDown });
-          }
-          break;
-        case "i":
-          if (focusedHandler) {
-            const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrame) {
-              const newIf = createIf("", -1, parentFrame?.depth + 1, []);
-              createNewFrame(newIf)
-            }
-          }
-          break;
-        case "w":
-          if (focusedHandler) {
-            const parentFrameWhile = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrameWhile) {
-              const newWhile = createWhile("", -1, parentFrameWhile?.depth + 1, []);
-              createNewFrame(newWhile);
-            }
-          }
-          break;
-        case "a":
-          if (focusedHandler) {
-            const parentFrameAssignment = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrameAssignment) {
-              const newAssignment = createAssignment("", "", -1, parentFrameAssignment?.depth + 1);
-              createNewFrame(newAssignment);
-            }
-          }
-          break;
-        // case "c":
-        //   if (focusedHandler) {
-        //     const parentFrameClass = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-        //     if (parentFrameClass) {
-        //       const newClass = createClassDefinition("", [], -1, parentFrameClass?.depth + 1);
-        //       createNewFrame({ frame: newClass, parentId: focusedDropZoneCoords.frameId, index: focusedDropZoneCoords.index });
-        //     }
-        //   }
-        //   break;
-        case "/":
-          if (focusedHandler) {
-            const parentFrameComment = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrameComment) {
-              const newComment = createComment("", -1, parentFrameComment?.depth + 1);
-              createNewFrame(newComment);
-            }
-          }
-          break;
-        case "e":
-          if (focusedHandler) {
-            const parentFrameExpression = findFrame(focusedHandler?.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrameExpression) {
-              const newExpression = createExpression("", -1, parentFrameExpression?.depth + 1);
-              createNewFrame(newExpression)
-            }
-          }
-          break;
-        case "f":
-          if (focusedHandler) {
-            const parentFrameFor = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
-            if (parentFrameFor) {
-              const newFor = createFor("", "", -1, parentFrameFor?.depth + 1, []);
-              createNewFrame(newFor);
-            }
-          }
-          break;
-        // case "m":
-        // 	const parentFrameFunctionCall = findFrame(baseFrame, focusedDropZoneCoords.frameId);
-        // 	if (parentFrameFunctionCall) {
-        // 		const newFunctionCall = createFunctionCall("", [], -1, parentFrameFunctionCall?.depth + 1);
-        // 		createNewFrame({ frame: newFunctionCall, parentId: focusedDropZoneCoords.frameId, index: focusedDropZoneCoords.index });
-        // 	}
-        // 	break;
-        // case "d":
-        // 	const parentFrameFunctionDefinition = findFrame(baseFrame, focusedDropZoneCoords.frameId);
-        // 	if (parentFrameFunctionDefinition) {
-        // 		const newFunctionDefinition = createFunctionDefinition("", [], -1, parentFrameFunctionDefinition?.depth + 1);
-        // 		createNewFrame({ frame: newFunctionDefinition, parentId: focusedDropZoneCoords.frameId, index: focusedDropZoneCoords.index });
-        // 	}
-        // 	break;
-        default:
-          break;
+      if (e.shiftKey) {
+        handleShiftKeyDown(e);
+      } else {
+        handleSingleKeyDown(e);
       }
     }
-  };
+  }
+
 
   useEffect(() => {
     const handleKeyDownWrapper = (e: KeyboardEvent) => handleKeyDown(e, isEditing);
