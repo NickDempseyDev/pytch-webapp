@@ -250,6 +250,31 @@ type NoteChangeAugArgs = {
   handleChangeId(id: number): void;
 };
 
+export const studyUrlBase = 'https://pytchstudy.scss.tcd.ie/beta/g0/study-data';
+
+const telemetryLogBuild = (errs: any[], outcomeKind: string, eventData: string) => {
+
+  fetch(`${studyUrlBase}/sessions/${localStorage.getItem('sessionCode')}/events`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    },
+    body: JSON.stringify({
+      kind: outcomeKind,
+      detail: {
+        errors: errs,
+        data: eventData,
+      }
+    }),
+  }).then(response => response.json()).then(data => {
+    console.log('Successful Telemetry Logging:', data);
+  }).catch((error) => {
+    console.error('Error:', error);
+  });
+
+}
+
 export interface IActiveProject {
   changesManager: NotableChangesManager;
   _noteChange: Action<IActiveProject, NoteChangeAugArgs>;
@@ -1250,6 +1275,8 @@ export const activeProject: IActiveProject = {
 
       const outcomeKind = BuildOutcomeKindOps.displayName(buildOutcome.kind);
       const eventData = JSON.stringify(project.program);
+      console.log(`build outcome kind: ${outcomeKind}; data: ${eventData}`);
+      
       fireAndForgetEvent(`build-${outcomeKind}`, eventData);
 
       console.log("build outcome:", buildOutcome);
@@ -1264,7 +1291,7 @@ export const activeProject: IActiveProject = {
             break;
         }
       }
-
+      let errs = [] as any[];
       if (buildOutcome.kind === BuildOutcomeKind.Failure) {
         const buildError = buildOutcome.error;
         if (buildError.tp$name !== "PytchBuildError") {
@@ -1276,6 +1303,7 @@ export const activeProject: IActiveProject = {
         if (buildError.innerError.tp$name === "TigerPythonSyntaxAnalysis") {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           buildError.innerError.syntax_errors.forEach((err: any) => {
+            errs.push(err.tiger_python_errorcode)
             recordError(err, {
               kind: "build",
               phase: buildError.phase,
@@ -1289,10 +1317,16 @@ export const activeProject: IActiveProject = {
             phaseDetail: buildError.phaseDetail,
           });
         }
-
+        
         ensureNotFullScreen("force-wide-info-pane");
       }
 
+      const parsedBoolean = localStorage.getItem("isLogging") === "true";
+
+      if (parsedBoolean) {
+        telemetryLogBuild(errs, outcomeKind, eventData);
+      }
+      
       actions.incrementBuildSeqnum();
       actions.noteCodeSaved();
       storeActions.ideLayout.maybeAdvanceTour("green-flag");

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DivSettingWindowTitle } from "../DivSettingWindowTitle";
 import { EditorAndInfo } from "./EditorAndInfo";
 import { StageAndActorsList } from "./StageAndActorsList";
@@ -10,8 +10,11 @@ import { ActivityBar } from "./ActivityBar";
 import { useJrEditState } from "./hooks";
 import { ActivityContent } from "./ActivityContent";
 import { StageWithControls } from "../StageWithControls";
+import SessionForm from "./SessionForm";
 
 export const IDEContents: React.FC<EmptyProps> = () => {
+  const [hasTokens, setHasTokens] = useState(false);
+  const logging = false;
   const projectName = useStoreState(
     (state) => state.activeProject.project.name
   );
@@ -28,6 +31,21 @@ export const IDEContents: React.FC<EmptyProps> = () => {
   );
 
   useEffect(() => maybeConnectToLiveReloadServer());
+
+  useEffect(() => {
+    console.log(localStorage.getItem("sessionCode"));
+
+    if (localStorage.getItem("sessionCode")) {
+      setHasTokens(true);
+    }
+
+    localStorage.setItem("isLogging", logging.toString());
+
+  }, []);
+
+  if (!hasTokens) {
+    return <SessionForm setHasTokens={setHasTokens} />;
+  }
 
   if (isFullScreen) {
     const divProps = {

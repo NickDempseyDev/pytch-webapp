@@ -282,8 +282,9 @@ export class StructuredProgramOps {
     let actor = StructuredProgramOps.uniqueActorById(program, actorId);
     switch (action.kind) {
       case "insert": {
-        const handler = EventHandlerOps.newWithEmptyCode(eventDescriptor);
-        actor.currentlyFocusedDropzone = {handlerId: handler.id, frameId: 0, index: 0};
+        const handler = EventHandlerOps.newWithEmptyCode(eventDescriptor, actor.nextFrameId);
+        actor.currentlyFocusedDropzone = {handlerId: handler.id, frameId: actor.nextFrameId, index: 0};
+        actor.nextFrameId += 1;
         ActorOps.appendHandler(actor, handler);
         return handler.id;
       }

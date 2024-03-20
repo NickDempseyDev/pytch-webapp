@@ -17,6 +17,7 @@ type DropZoneProps = {
 
 const DropZone: React.FC<DropZoneProps> = ({ index, parentId, handlerId, actorId, moveFrame, applyFocus, focusedDropZoneCoords }) => {
 	const setFocusedDropDownCoords = useStoreActions(actions => actions.activeProject.setFocusedDropDownCoords);
+	const setIsEditingText = useStoreActions(actions => actions.activeProject.setIsEditingText);
 	const [isHovered, setIsHovered] = React.useState(false);
 	const [{ isActive }, drop] = useDrop({
 		accept: 'FRAME',
@@ -106,6 +107,7 @@ const DropZone: React.FC<DropZoneProps> = ({ index, parentId, handlerId, actorId
 
 	const setFocus = () => {
 		setFocusedDropDownCoords({ actorId, newDropZone: { handlerId, frameId: parentId, index } });
+		setIsEditingText(false);
 	}
 
 	return (

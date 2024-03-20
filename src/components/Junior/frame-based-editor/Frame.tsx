@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDrag } from 'react-dnd';
 import { FBFrameT, FBTypes, FBWhileT, FBForT, FBAssignmentT, FBClassDefinitionT, FBCommentT, FBExpressionT, FBFunctionCallT, FBFunctionDefinitionT, DropZoneCoordinate, FocusedDropZoneUpdateDescriptor, FrameMoveDescriptor, FrameUpdateDescriptor, FrameDeleteDescriptor, FBPytchBroadcastT, FBPytchGoToT, FBPytchSayT, FBPytchChangeXT, FBPytchChangeYT, FBPytchXPosT, FBPytchBroadcastAndWaitT, FBPytchTouchingT, FBPytchKeyPressedT } from "../../../model/frame-based";
 import IfFrame from './frames/IfFrame';
@@ -127,6 +127,12 @@ const Frame: React.FC<FrameProps> = ({ actorId, handlerId, frame, moveFrame, edi
   const removeFrame = () => {
     deleteFrame({ frameId: frame.id, actorId, handlerId });
   }
+
+  useEffect(() => {
+    return () => {
+      setIsEditingText(false);
+    }
+  }, []);
 
   return (
     <div ref={drag} className={`frame dep-${frame.depth}`}>

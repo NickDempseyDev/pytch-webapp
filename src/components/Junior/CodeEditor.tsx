@@ -70,18 +70,6 @@ const ScriptsEditor = () => {
   );
   const scriptWasJustAdded = scriptAddedEvents.length > 0;
 
-  const createNewFrame = (frame: FBFrameT) => {
-    if (focusedHandler) {
-      createFrame({
-        newFrame: frame,
-        parentId: focusedDropZoneCoords.frameId,
-        index: focusedDropZoneCoords.index,
-        handlerId: focusedHandler.id,
-        actorId: actorId
-      });
-    }
-  }
-
   useEffect(() => {
     // Purge map entries for handlers not in this instantiation of editor.
     aceControllerMap.deleteExcept(handlerIds);
@@ -96,17 +84,100 @@ const ScriptsEditor = () => {
   const framesProgram = useFramesProgram();
   const focusedActor = framesProgram.actors.find((actor) => actor.id === actorId) as Actor
   const focusedHandler = focusedActor.currentlyFocusedDropzone.handlerId ? ActorOps.handlerById(focusedActor, focusedActor.currentlyFocusedDropzone.handlerId) : null
-  const isEditing = focusedActor.isEditingText;
   const focusedDropZoneCoords = focusedActor.currentlyFocusedDropzone;
 
   const moveFrame = useStoreActions((actions) => actions.activeProject.moveFrame)
   const deleteFrame = useStoreActions((actions) => actions.activeProject.deleteFrame)
-  const createFrame = useStoreActions((actions) => actions.activeProject.createFrame)
   const editFrame = useStoreActions((actions) => actions.activeProject.editFrame)
   const setFocusedDropDownCoords = useStoreActions((actions) => actions.activeProject.setFocusedDropDownCoords)
   const setIsEditingText = useStoreActions((actions) => actions.activeProject.setIsEditingText)
 
   const nHandlers = handlerIds.length;
+
+  // The "pb-5" adds padding below; without this, the above scroll
+  // didn't scroll quite to the bottom.  I didn't get to the bottom of
+  // this, and adding padding was an easy workaround.
+
+  // useEffect(() => {
+  //   // const handleKeyDownWrapper = (e: KeyboardEvent) => handleKeyDown(e, isEditing);
+  //   // window.addEventListener("keydown", handleKeyDownWrapper);
+
+  //   // return () => {
+  //   //   window.removeEventListener("keydown", handleKeyDownWrapper);
+  //   // }
+  // }, [focusedDropZoneCoords, isEditing]);
+
+  const wrap = (content: JSX.Element) => (
+    <div className="temp-class">
+      <div ref={scriptsDivRef} className="pb-5 Junior-ScriptsEditor">
+        {content}
+      </div>
+      <AddHandlerButton />
+    </div>
+  );
+
+  if (nHandlers === 0) {
+    return wrap(<NoContentHelp actorKind={kind} contentKind="scripts" />);
+  }
+
+
+  // TODO: Get a list of which handlers have raised errors.  Give them a
+  // red (#c66 is OK for a start) background panel.  0.5rem of padding
+  // and of margin, then make the padding #c66 when that script's ID is
+  // in the list.
+
+  // For computing prevHandlerId and nextHandlerId, indexing into
+  // handlerIds either with -1 or with nHandlers gives undefined, which
+  // is a bit messy, but works for null.
+  return wrap(
+    <>
+      {handlerIds.map((hid, idx) => {
+        const h = ActorOps.handlerById(focusedActor, hid);
+        return <PytchScriptEditor
+          key={hid}
+          actorKind={kind}
+          actorId={actorId}
+          handlerId={hid}
+          isFrames={isFrames}
+          prevHandlerId={handlerIds[idx - 1]}
+          nextHandlerId={handlerIds[idx + 1]}
+          baseFrame={h.baseFrame}
+          moveFrame={moveFrame}
+          editFrame={editFrame}
+          deleteFrame={deleteFrame}
+          applyFocus={setFocusedDropDownCoords}
+          focusedDropZoneCoords={focusedDropZoneCoords}
+          setIsEditingText={setIsEditingText}
+        />
+      })}
+    </>
+  );
+};
+
+export const CodeEditor = () => {
+  const actorId = useJrEditState((s) => s.focusedActor);
+  const [dropProps, dropRef] = useHelpHatBlockDrop(actorId);
+  const framesProgram = useFramesProgram();
+  const focusedActor = framesProgram.actors.find((actor) => actor.id === actorId) as Actor
+  const focusedHandler = focusedActor.currentlyFocusedDropzone.handlerId ? ActorOps.handlerById(focusedActor, focusedActor.currentlyFocusedDropzone.handlerId) : null
+  const isEditing = focusedActor.isEditingText;
+  const focusedDropZoneCoords = focusedActor.currentlyFocusedDropzone;
+
+  const setFocusedDropDownCoords = useStoreActions((actions) => actions.activeProject.setFocusedDropDownCoords)
+  const createFrame = useStoreActions((actions) => actions.activeProject.createFrame)
+
+  const createNewFrame = (frame: FBFrameT) => {
+    if (focusedHandler) {
+      createFrame({
+        newFrame: frame,
+        parentId: focusedDropZoneCoords.frameId,
+        index: focusedDropZoneCoords.index,
+        handlerId: focusedHandler.id,
+        actorId: actorId
+      });
+    }
+  }
+
 
   const handleSingleKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -268,9 +339,6 @@ const ScriptsEditor = () => {
     }
   }
 
-  // The "pb-5" adds padding below; without this, the above scroll
-  // didn't scroll quite to the bottom.  I didn't get to the bottom of
-  // this, and adding padding was an easy workaround.
   const handleKeyDown = (e: any, isEditing: boolean) => {
     if (!isEditing) {
       if (e.shiftKey) {
@@ -280,67 +348,6 @@ const ScriptsEditor = () => {
       }
     }
   }
-
-
-  useEffect(() => {
-    // const handleKeyDownWrapper = (e: KeyboardEvent) => handleKeyDown(e, isEditing);
-    // window.addEventListener("keydown", handleKeyDownWrapper);
-
-    // return () => {
-    //   window.removeEventListener("keydown", handleKeyDownWrapper);
-    // }
-  }, [focusedDropZoneCoords, isEditing]);
-
-  const wrap = (content: JSX.Element) => (
-    <div className="temp-class" tabIndex={-1} onKeyDown={e => handleKeyDown(e, isEditing)} >
-      <div ref={scriptsDivRef} className="pb-5 Junior-ScriptsEditor">
-        {content}
-      </div>
-      <AddHandlerButton />
-    </div>
-  );
-
-  if (nHandlers === 0) {
-    return wrap(<NoContentHelp actorKind={kind} contentKind="scripts" />);
-  }
-
-
-  // TODO: Get a list of which handlers have raised errors.  Give them a
-  // red (#c66 is OK for a start) background panel.  0.5rem of padding
-  // and of margin, then make the padding #c66 when that script's ID is
-  // in the list.
-
-  // For computing prevHandlerId and nextHandlerId, indexing into
-  // handlerIds either with -1 or with nHandlers gives undefined, which
-  // is a bit messy, but works for null.
-  return wrap(
-    <>
-      {handlerIds.map((hid, idx) => {
-        const h = ActorOps.handlerById(focusedActor, hid);
-        return <PytchScriptEditor
-          key={hid}
-          actorKind={kind}
-          actorId={actorId}
-          handlerId={hid}
-          isFrames={isFrames}
-          prevHandlerId={handlerIds[idx - 1]}
-          nextHandlerId={handlerIds[idx + 1]}
-          baseFrame={h.baseFrame}
-          moveFrame={moveFrame}
-          editFrame={editFrame}
-          deleteFrame={deleteFrame}
-          applyFocus={setFocusedDropDownCoords}
-          focusedDropZoneCoords={focusedDropZoneCoords}
-          setIsEditingText={setIsEditingText}
-        />
-      })}
-    </>
-  );
-};
-
-export const CodeEditor = () => {
-  const actorId = useJrEditState((s) => s.focusedActor);
-  const [dropProps, dropRef] = useHelpHatBlockDrop(actorId);
 
   // Normally we'd let the <Tabs> component worry about whether a
   // particular <Tab> is shown or hidden.  But we want the
@@ -359,7 +366,7 @@ export const CodeEditor = () => {
 
   // TODO: add the on key press to the div here
   return (
-    <div ref={dropRef} className={classes}>
+    <div ref={dropRef} className={classes} tabIndex={-1} onKeyDown={e => handleKeyDown(e, isEditing)}>
       <ScriptsEditor />
     </div>
   );

@@ -855,55 +855,6 @@ const createNewFrame = (baseFrame: FBFrameT, frame: FBFrameT, parentId: number, 
 	return true;
 }
 
-// export interface FBEditor {
-// 	baseFrame: FBFrameT;
-// 	focusedDropZoneCoords: DropZoneCoordinate;
-// 	isEditingText: boolean;
-// 	setIsEditingText: Action<FBEditor, boolean>;
-// 	createNewFrame: Action<FBEditor, { frame: FBFrameT, parentId: number, index: number }>;
-// 	editFrame: Action<FBEditor, FBFrameT>;
-// 	deleteFrame: Action<FBEditor, number>;
-// 	moveFrame: Action<FBEditor, { id: number, index: number, newParentId: number }>;
-// 	applyFocus: Action<FBEditor, { frameId: number, index: number }>;
-// 	nextId: number;
-// }
-
-// export const frameBasedEditor: FBEditor = {
-// 	baseFrame: createNOP(0, 0, [
-// 		createExpression('import pytch', 1, 1),
-// 		createIf('True', 2, 1, 
-// 			[createExpression('print("Hello World")', 6, 2)]),
-// 			createAssignment('i', '5', 7, 1),
-// 		createIf('True', 3, 1, 
-// 			[createWhile('i > 0', 4, 2, [createExpression('print("Hello World")', 5, 3), createAssignment('i', 'i - 1', 8, 3),])]),]),
-// 	focusedDropZoneCoords: { frameId: 0, index: 0 },
-// 	isEditingText: false,
-// 	setIsEditingText: action((state, isEditingText) => {
-// 		state.isEditingText = isEditingText;
-// 	}),
-// 	nextId: 5,
-// 	createNewFrame: action((state, { frame, parentId, index }) => {
-// 		createNewFrame(state, frame, parentId, index);
-// 	}),
-// 	editFrame: action((state, newFrame) => {
-// 		const updatedBaseFrame = deepCopy(state.baseFrame);
-// 		const success = recursiveEditFrame(updatedBaseFrame, newFrame);
-// 		if (success) {
-// 			state.baseFrame = updatedBaseFrame;
-// 			assignIdsRecursive(state.baseFrame, 0);
-// 		}
-// 	}),
-// 	deleteFrame: action((state, id) => {
-// 		deleteFrame(state.baseFrame, id);
-// 	}),
-// 	moveFrame: action((state, {id, index, newParentId}) => {		
-// 		moveFrame(state.baseFrame, id, index, newParentId);
-// 	}),
-// 	applyFocus: action((state, dropZoneCoordinate) => {
-// 		state.focusedDropZoneCoords = { frameId: dropZoneCoordinate.frameId, index: dropZoneCoordinate.index };
-// 	}),
-// }
-
 const reassignIds = (frame: FBFrameT, nextId: number) => {
 	frame.id = nextId;
 	for (let i = 0; i < frame.children.length; i++) {
@@ -965,7 +916,7 @@ export class FrameBasedStructuredProgramOps {
 			actor.handlers.forEach((h) => {
 				currentId = reassignIds(h.baseFrame, currentId);
 			})
-			actor.nextFrameId = currentId;
+			actor.nextFrameId = currentId + 1;
 		}
 	}
 
@@ -990,10 +941,9 @@ export class FrameBasedStructuredProgramOps {
 	}
 
 	static moveFrame(program: StructuredProgram, frameMoveDescriptor: FrameMoveDescriptor) {
-		const fromActor = StructuredProgramOps.uniqueActorById(program, frameMoveDescriptor.fromFramePos.actorId);
-		const toActor = StructuredProgramOps.uniqueActorById(program, frameMoveDescriptor.toFramePos.actorId);
-		const fromHandler = ActorOps.handlerById(fromActor, frameMoveDescriptor.fromFramePos.handlerId);
-		const toHandler = ActorOps.handlerById(toActor, frameMoveDescriptor.toFramePos.handlerId);
+		const actor = StructuredProgramOps.uniqueActorById(program, frameMoveDescriptor.fromFramePos.actorId);
+		const fromHandler = ActorOps.handlerById(actor, frameMoveDescriptor.fromFramePos.handlerId);
+		const toHandler = ActorOps.handlerById(actor, frameMoveDescriptor.toFramePos.handlerId);
 
 		let tempFrameCopy = findFrame(fromHandler.baseFrame, frameMoveDescriptor.frameId);
 
@@ -1007,16 +957,10 @@ export class FrameBasedStructuredProgramOps {
 		moveFrame(toHandler.baseFrame, frameToMove, frameMoveDescriptor.toFramePos.index, frameMoveDescriptor.toFramePos.parentFrameId);
 		
 		let currentId = 1
-		fromActor.handlers.forEach((h) => {
+		actor.handlers.forEach((h) => {
 			currentId = reassignIds(h.baseFrame, currentId);
 		})
-		fromActor.nextFrameId = currentId;
-
-		currentId = 1
-		toActor.handlers.forEach((h) => {
-			currentId = reassignIds(h.baseFrame, currentId);
-		})
-		toActor.nextFrameId = currentId;
+		actor.nextFrameId = currentId + 1;
 	}
 
 	static applyFocus(program: StructuredProgram, focusedDropZoneUpdateDescriptor: FocusedDropZoneUpdateDescriptor) {
