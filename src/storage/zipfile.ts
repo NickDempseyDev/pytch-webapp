@@ -246,7 +246,7 @@ const validateAssetsLayout = (
       });
       break;
     }
-    case "per-method": {
+    default: {
       const fail = (message: string) => {
         throw new Error(
           'a "per-method" program must have all its asset files' +
@@ -272,8 +272,8 @@ const validateAssetsLayout = (
       });
       break;
     }
-    default:
-      assertNever(programKind);
+    // default:
+    //   assertNever(programKind);
   }
 };
 

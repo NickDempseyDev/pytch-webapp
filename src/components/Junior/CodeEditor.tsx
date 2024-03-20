@@ -271,7 +271,7 @@ const ScriptsEditor = () => {
   // The "pb-5" adds padding below; without this, the above scroll
   // didn't scroll quite to the bottom.  I didn't get to the bottom of
   // this, and adding padding was an easy workaround.
-  const handleKeyDown = (e: KeyboardEvent, isEditing: boolean) => {
+  const handleKeyDown = (e: any, isEditing: boolean) => {
     if (!isEditing) {
       if (e.shiftKey) {
         handleShiftKeyDown(e);
@@ -283,21 +283,21 @@ const ScriptsEditor = () => {
 
 
   useEffect(() => {
-    const handleKeyDownWrapper = (e: KeyboardEvent) => handleKeyDown(e, isEditing);
-    window.addEventListener("keydown", handleKeyDownWrapper);
+    // const handleKeyDownWrapper = (e: KeyboardEvent) => handleKeyDown(e, isEditing);
+    // window.addEventListener("keydown", handleKeyDownWrapper);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDownWrapper);
-    }
+    // return () => {
+    //   window.removeEventListener("keydown", handleKeyDownWrapper);
+    // }
   }, [focusedDropZoneCoords, isEditing]);
 
   const wrap = (content: JSX.Element) => (
-    <>
+    <div className="temp-class" tabIndex={-1} onKeyDown={e => handleKeyDown(e, isEditing)} >
       <div ref={scriptsDivRef} className="pb-5 Junior-ScriptsEditor">
         {content}
       </div>
       <AddHandlerButton />
-    </>
+    </div>
   );
 
   if (nHandlers === 0) {
@@ -357,6 +357,7 @@ export const CodeEditor = () => {
 
   const classes = classNames("Junior-CodeEditor", "abs-0000-oflow", dropProps);
 
+  // TODO: add the on key press to the div here
   return (
     <div ref={dropRef} className={classes}>
       <ScriptsEditor />

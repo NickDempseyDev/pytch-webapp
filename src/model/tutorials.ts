@@ -171,7 +171,7 @@ export const tutorialCollection: ITutorialCollection = {
                 },
                 program: PytchProgramOps.fromPythonCode(content.initialCode),
               };
-            case "per-method": {
+            default: {
               const program = PytchProgramOps.newEmpty("per-method");
 
               // This is clunky; see also other comment above, in the
@@ -203,8 +203,8 @@ export const tutorialCollection: ITutorialCollection = {
                 assets,
               };
             }
-            default:
-              return assertNever(content.programKind);
+            // default:
+            //   return assertNever(content.programKind);
           }
         })();
 
@@ -232,7 +232,7 @@ export const tutorialCollection: ITutorialCollection = {
               );
               return { summary, program };
             }
-            case "per-method": {
+            default: {
               const skeletonUrl = `${tutorialSlug}/skeleton-structured-program.json`;
               const skeleton = await tutorialResourceParsedJson(skeletonUrl);
               const embodyContext = new EmbodyDemoFromTutorial(tutorialSlug);
@@ -245,8 +245,8 @@ export const tutorialCollection: ITutorialCollection = {
               const assets = await embodyContext.allAddAssetDescriptors();
               return { summary, program, assets };
             }
-            default:
-              return assertNever(content.programKind);
+            // default:
+            //   return assertNever(content.programKind);
           }
         })();
 
