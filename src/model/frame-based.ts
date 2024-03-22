@@ -83,16 +83,16 @@ export type FBPytchKeyPressedT = {
 } & FBBaseFrameT;
 
 export type FBPytchChangeXT = {
-	amount: number;
+	amount: string;
 } & FBBaseFrameT;
 
 export type FBPytchChangeYT = {
-	amount: number;
+	amount: string;
 } & FBBaseFrameT;
 
 export type FBPytchGoToT = {
-	x: number;
-	y: number;
+	x: string;
+	y: string;
 } & FBBaseFrameT;
 
 export type FBPytchShowT = {
@@ -159,7 +159,7 @@ export const createPytchKeyPressed = (key: string, id: number, depth: number): F
 	}
 }
 
-export const createPytchChangeX = (amount: number, id: number, depth: number): FBPytchChangeXT => {
+export const createPytchChangeX = (amount: string, id: number, depth: number): FBPytchChangeXT => {
 	return {
 		type: FBTypes.PYTCH_CHANGE_X,
 		id,
@@ -171,7 +171,7 @@ export const createPytchChangeX = (amount: number, id: number, depth: number): F
 	}
 }
 
-export const createPytchChangeY = (amount: number, id: number, depth: number): FBPytchChangeYT => {
+export const createPytchChangeY = (amount: string, id: number, depth: number): FBPytchChangeYT => {
 	return {
 		type: FBTypes.PYTCH_CHANGE_Y,
 		id,
@@ -183,7 +183,7 @@ export const createPytchChangeY = (amount: number, id: number, depth: number): F
 	}
 }
 
-export const createPytchGoTo = (x: number, y: number, id: number, depth: number): FBPytchGoToT => {
+export const createPytchGoTo = (x: string, y: string, id: number, depth: number): FBPytchGoToT => {
 	return {
 		type: FBTypes.PYTCH_GO_TO,
 		id,
@@ -529,7 +529,7 @@ const extractTextualPythonFromPytchChangeYTFrame = (frame: FBPytchChangeYT) => {
 }
 
 const extractTextualPythonFromPytchGoToTFrame = (frame: FBPytchGoToT) => {
-	return `self.go_to(${frame.x}, ${frame.y})\n`;
+	return `self.go_to_xy(${frame.x}, ${frame.y})\n`;
 }
 
 const extractTextualPythonFromPytchShowTFrame = (frame: FBPytchShowT) => {
@@ -909,7 +909,10 @@ export class FrameBasedStructuredProgramOps {
 		const baseFrameToUpdate = handler.baseFrame;
 		const updatedBaseFrame = deepCopy(baseFrameToUpdate);
 		const newFrame = frameUpdateDescriptor.newFrame;
+		console.log(updatedBaseFrame, newFrame);
 		const success = recursiveEditFrame(updatedBaseFrame, newFrame);
+		console.log(success);
+		
 		if (success) {
 			let currentId = 1;
 			handler.baseFrame = updatedBaseFrame;
@@ -937,7 +940,8 @@ export class FrameBasedStructuredProgramOps {
 		actor.handlers.forEach((h) => {
 			currentId = reassignIds(h.baseFrame, currentId);
 		})
-		actor.nextFrameId = currentId;
+	
+		actor.nextFrameId = currentId + 1;		
 	}
 
 	static moveFrame(program: StructuredProgram, frameMoveDescriptor: FrameMoveDescriptor) {

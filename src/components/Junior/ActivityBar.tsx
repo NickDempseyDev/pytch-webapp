@@ -10,6 +10,8 @@ import { IconName } from "@fortawesome/fontawesome-common-types";
 import { useHasLinkedLesson } from "./lesson/hooks";
 import { EmptyProps } from "../../utils";
 import { useStoreState } from "../../store";
+import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import FramesHelp from "./FramesHelp";
 
 type TabKeyUiDetails = { icon: IconName; tooltip: string };
 
@@ -54,16 +56,25 @@ export const ActivityBar: React.FC<EmptyProps> = () => {
     (s) => s.activeProject.pendingSyncActionsExist
   );
 
+  const program = useStoreState((s) => s.activeProject.project.program);
+
   // TODO: Should the computation of the list of valid activity-tab-keys
   // be part of the model?
   const hasLinkedLesson = useHasLinkedLesson();
-  const tabs: Array<ActivityBarTabKey> = hasLinkedLesson
+  let tabs: Array<ActivityBarTabKey> = hasLinkedLesson
     ? ["helpsidebar", "lesson"]
     : ["helpsidebar"];
+
+  if (program.kind === "per-method-frames" && hasLinkedLesson) {
+    tabs = ["lesson"];
+  }
+
+  const [showFramesHelp, setShowFramesHelp] = React.useState(false);
 
   const syncClasses = classNames("sync-indicator", { pendingActionsExist });
   return (
     <div className="ActivityBar">
+      {showFramesHelp && <FramesHelp isActive={showFramesHelp} setIsActive={setShowFramesHelp} />}
       <div className="activity-bar-tabs">
         {tabs.map((tab) => (
           <ActivityBarTab
@@ -72,6 +83,12 @@ export const ActivityBar: React.FC<EmptyProps> = () => {
             isActive={tabIsActive(tab, activityContentState)}
           />
         ))}
+        {program.kind === 'per-method-frames' && <div className={classNames("ActivityBarTab", true)}>
+          <div className="tabkey-icon" onClick={() => setShowFramesHelp(true)}>
+            <FontAwesomeIcon icon={faCircleQuestion} />
+          </div>
+          <div className="tabkey-tooltip">Frames help</div>
+        </div>}
       </div>
       <div className={syncClasses}>
         <FontAwesomeIcon icon="arrows-rotate" />

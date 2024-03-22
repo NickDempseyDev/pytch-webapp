@@ -12,16 +12,16 @@ type GoToFrameProps = {
 
 const GoToFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }: GoToFrameProps) => {
 	const changeXValueInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-		editFrame({ actorId, handlerId, newFrame: { ...frame, x: parseInt(event.target.value) } })
+		editFrame({ actorId, handlerId, newFrame: { ...frame, x: event.target.value } })
 	}
 
 	const changeYValueInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-		editFrame({ actorId, handlerId, newFrame: { ...frame, y: parseInt(event.target.value) } })
+		editFrame({ actorId, handlerId, newFrame: { ...frame, y: event.target.value } })
 	}
 
 	return (
 		<div>
-			self.got_to_xy(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.x} onChange={changeXValueInput} />, <input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.y} onChange={changeYValueInput} />)
+			self.go_to_xy(<input spellCheck={false} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.x} onChange={changeXValueInput} />, <input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.y} onChange={changeYValueInput} />)
 		</div>
 	)
 }

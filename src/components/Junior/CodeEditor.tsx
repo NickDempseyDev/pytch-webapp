@@ -267,9 +267,7 @@ export const CodeEditor = () => {
         if (focusedHandler) {
           const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
           if (parentFrame) {
-            console.log('G GOTO');
-
-            const newGoTo = createPytchGoTo(0, 0, -1, parentFrame?.depth + 1);
+            const newGoTo = createPytchGoTo("0", "0", -1, parentFrame?.depth + 1);
             createNewFrame(newGoTo);
           }
         }
@@ -278,7 +276,7 @@ export const CodeEditor = () => {
         if (focusedHandler) {
           const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
           if (parentFrame) {
-            const newChangeX = createPytchChangeX(0, -1, parentFrame?.depth + 1);
+            const newChangeX = createPytchChangeX("0", -1, parentFrame?.depth + 1);
             createNewFrame(newChangeX);
           }
         }
@@ -287,7 +285,7 @@ export const CodeEditor = () => {
         if (focusedHandler) {
           const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
           if (parentFrame) {
-            const newChangeY = createPytchChangeY(0, -1, parentFrame?.depth + 1);
+            const newChangeY = createPytchChangeY("0", -1, parentFrame?.depth + 1);
             createNewFrame(newChangeY);
           }
         }
@@ -324,6 +322,7 @@ export const CodeEditor = () => {
           const parentFrame = findFrame(focusedHandler.baseFrame, focusedDropZoneCoords.frameId);
           if (parentFrame) {
             const newHide = createPytchHide(-1, parentFrame?.depth + 1);
+            createNewFrame(newHide);
           }
         }
         break;

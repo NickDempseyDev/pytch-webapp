@@ -12,7 +12,7 @@ type ChangeYFrameProps = {
 
 const ChangeYFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }: ChangeYFrameProps) => {
 	const changeValueInput = (event: React.ChangeEvent<HTMLInputElement>) => {
-		editFrame({ actorId, handlerId, newFrame: { ...frame, amount: parseFloat(event.target.value) } })
+		editFrame({ actorId, handlerId, newFrame: { ...frame, amount: event.target.value } })
 	}
 
 	return (

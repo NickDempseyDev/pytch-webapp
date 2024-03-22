@@ -83,7 +83,7 @@ const Frame: React.FC<FrameProps> = ({ actorId, handlerId, frame, moveFrame, edi
     return <>
       {frame.children.map((child: FBFrameT, childIndex: number) => {
         return (
-          <>
+          <div key={handlerId + child.id + childIndex}>
             <DropZone
               key={child.id + 'dropzone'}
               handlerId={handlerId}
@@ -108,7 +108,7 @@ const Frame: React.FC<FrameProps> = ({ actorId, handlerId, frame, moveFrame, edi
               focusedDropZoneCoords={focusedDropZoneCoords}
               setIsEditingText={setIsEditingText}
             />
-          </>
+          </div>
         );
       })}
       {frame.canHaveChildren && <DropZone

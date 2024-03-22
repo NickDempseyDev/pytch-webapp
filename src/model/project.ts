@@ -463,7 +463,10 @@ const ensureStructured = (
   label: string
 ): StructuredProgram => {
   failIfDummy(project, label);
-  return ensureKind(`${label}()`, project.program, "per-method").program;
+  // return ensureKind(`${label}()`, project.program, "per-method").program;
+  // TODO: temporary for frame-based prototyping
+  //@ts-ignore
+  return project.program.program;
 };
 
 const ensureJrTutorial = (state: State<IActiveProject>): LinkedJrTutorial => {

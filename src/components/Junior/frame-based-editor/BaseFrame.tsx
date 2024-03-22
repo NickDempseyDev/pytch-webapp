@@ -57,7 +57,7 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ handlerId, actorId, baseFrame, mo
 	return (
 		<div className="frames-container">
 			{baseFrame.children.map((frame: FBFrameT, index: number) => (
-				<>
+				<div key={"BASE" + index}>
 					<DropZone
 						key={frame.id + 'dropzone'}
 						handlerId={handlerId}
@@ -82,7 +82,7 @@ const BaseFrame: React.FC<BaseFrameProps> = ({ handlerId, actorId, baseFrame, mo
 						focusedDropZoneCoords={focusedDropZoneCoords}
 						setIsEditingText={setIsEditingText}
 					/>
-				</>
+				</div>
 			))}
 			<DropZone
 				key={'00' + 'dropzone'}

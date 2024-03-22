@@ -905,6 +905,50 @@ $key-chooser-width: 54rem;
   border-radius: 2rem;
 }
 
+.show-frames-help {
+  position: absolute;
+  background-color: #fff;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 33%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.2em;
+  font-weight: 600;
+  overflow-y: auto;
+}
+
+.frames-help-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.frames-help-item {
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  background-color: #306998;
+  color: #fff;
+}
+
+.frames-help-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.frames-help-font {
+  font-weight: 600;
+  background-color: #000;
+  padding: 0.5rem;
+}
+
 .dep-1 {
   background-color: #9c9cff;
 }

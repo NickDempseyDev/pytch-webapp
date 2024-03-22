@@ -103,7 +103,7 @@ const createProjectFromTutorial = async (
   // but for "per-method" tutorials, the caller provides the actual
   // assets in `options.assets`.  See the `createProjectFromTutorial()`
   // thunk below.
-  const isPerMethod = createProjectArgs.options.program?.kind === "per-method";
+  const isPerMethod = createProjectArgs.options.program?.kind === "per-method" || createProjectArgs.options.program?.kind === "per-method-frames";
   const assetURLs = isPerMethod ? [] : await tutorialAssetURLs(tutorialSlug);
 
   // It's enough to make the back-end database know about the assets
@@ -172,8 +172,9 @@ export const tutorialCollection: ITutorialCollection = {
                 program: PytchProgramOps.fromPythonCode(content.initialCode),
               };
             default: {
-              const program = PytchProgramOps.newEmpty("per-method");
-
+              // @ts-ignore
+              const program = PytchProgramOps.newEmpty(content.programKind) as StructuredProgram;
+              
               // This is clunky; see also other comment above, in the
               // function `createProjectFromTutorial()`.
               //
