@@ -17,7 +17,7 @@ const ChangeYFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }
 
 	return (
 		<div>
-			self.change_x(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.amount} onChange={changeValueInput} />)
+			self.change_y(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.amount} onChange={changeValueInput} />)
 		</div>
 	)
 }

@@ -8,12 +8,12 @@ type FramesHelpProps = {
 const HelpItem = (props: { title: string, content: string, shortcut: string }) => {
 	return (
 		<div className='frames-help-item'>
-			<h3>{props.title}</h3>
+			<pre>{props.title}</pre>
 			<div className='frames-help-block'>
-				<h5>Shortcut</h5>
-				<p className='frames-help-font'>{props.shortcut}</p>
-				<h5>Looks like</h5>
-				<p className='frames-help-font'>{props.content}</p>
+				<pre>Shortcut</pre>
+				<pre className='frames-help-font'>{props.shortcut}</pre>
+				<pre>Looks like</pre>
+				<pre className='frames-help-font'>{props.content}</pre>
 			</div>
 		</div>
 	)
@@ -76,7 +76,7 @@ const FramesHelp = (props: FramesHelpProps) => {
 			title: 'Show Frame',
 			content: 'self.show()',
 			shortcut: 'Shift and R'
-		}
+		},
 
 	]
 
@@ -88,6 +88,16 @@ const FramesHelp = (props: FramesHelpProps) => {
 			</div>
 			<p>Some helpful information about frames.</p>
 			{helpItems.map((item, index) => <HelpItem key={index} {...item} />)}
+			<div className='frames-help-item'>
+				<pre>All other commands</pre>
+				<div className='frames-help-block'>
+					<pre>Shortcut</pre>
+					<pre className='frames-help-font'>e</pre>
+					<pre>Allows you to type any command. Such as:</pre>
+					<pre className='frames-help-font'>pytch.wait_seconds(5)</pre>
+					<pre className='frames-help-font'>self.switch_costume("orange.png")</pre>
+				</div>
+			</div>
 		</div>
 	)
 }

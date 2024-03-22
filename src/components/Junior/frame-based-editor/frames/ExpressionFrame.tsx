@@ -15,7 +15,7 @@ const ExpressionFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerI
     editFrame({ actorId, handlerId, newFrame: { ...frame, text: event.target.value } })
   }
   return (
-    <div><input type="text" value={frame.text} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} /></div>
+    <input className='expression-input' type="text" value={frame.text} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />
   )
 }
 

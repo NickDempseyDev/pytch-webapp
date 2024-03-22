@@ -557,7 +557,7 @@ const extractTextualPythonFromPytchXPosTFrame = (frame: FBPytchXPosT) => {
 }
 
 const extractTextualPythonFromPytchSayTFrame = (frame: FBPytchSayT) => {
-	return `self.say("${frame.message}")\n`;
+	return `self.say(${frame.message})\n`;
 }
 
 const extractTextualPythonFromPytchBroadcastAndWaitTFrame = (frame: FBPytchBroadcastAndWaitT) => {
@@ -952,6 +952,24 @@ export class FrameBasedStructuredProgramOps {
 		let tempFrameCopy = findFrame(fromHandler.baseFrame, frameMoveDescriptor.frameId);
 
 		if (tempFrameCopy === null) {
+			return;
+		}
+
+		const isFrameBeingMovedToItsChild = (frame: FBFrameT, newParentId: number) => {
+			if (frame.id === newParentId) {
+				return true;
+			}
+
+			for (let child of frame.children) {
+				if (isFrameBeingMovedToItsChild(child, newParentId)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		if (isFrameBeingMovedToItsChild(tempFrameCopy, frameMoveDescriptor.toFramePos.parentFrameId)) {
 			return;
 		}
 

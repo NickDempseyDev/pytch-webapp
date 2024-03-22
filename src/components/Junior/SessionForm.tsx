@@ -26,13 +26,82 @@ const createSession = (participantCode: string, setIsErr: (isErr: boolean) => vo
 		return
 	}
 
+	const participantCodes = [
+		"rf9y-htkv",
+		"xqd6-4qh7",
+		"hjw9-bb4t",
+		"t7pj-3ftk",
+		"y3b6-h7h7",
+		"6677-jrkj",
+		"39w8-vjbm",
+		"3qwc-dfdm",
+		"r7bp-pkgt",
+		"74hp-bdqh",
+		"dqjk-vh37",
+		"jmg4-t4fj",
+		"b8jv-rcq8",
+		"gtbm-kpv8",
+		"hp4w-mj63",
+		"v4dx-ym9c",
+		"px6j-rdtp",
+		"rp8w-6rm8",
+		"ygb8-6h3m",
+		"hpg7-mxbr",
+		"g8mx-wcmg",
+		"d3b4-7ytt",
+		"jmhd-hwt9",
+		"c9d9-m8tf",
+		"9v9d-9mxb",
+		"kjbr-vq4r",
+		"388w-ytvw",
+		"7qgy-mfpt",
+		"xwh9-t8wd",
+		"8ygy-w7d6",
+		"9yh8-8qm8",
+		"vmqw-mqcc",
+		"cvcj-3ptf",
+		"v3hc-rbx7",
+		"4tt7-688j",
+		"pxmj-9394",
+		"6796-k8vd",
+		"kkr4-gqbm",
+		"qtjj-x4pv",
+		"phxc-7w9r",
+		"88ft-dm4g",
+		"fhcw-ddp4",
+		"7hpj-mhk6",
+		"rdbr-xvkk",
+		"q3ty-qhfg",
+		"qjmy-tdhd",
+		"t438-4yyw",
+		"pdyp-b9kk",
+		"4kp9-hyym",
+		"4k9d-8wpf",
+		"dojo"
+	]
+
+	if (!participantCodes.includes(participantCode)) {
+		setIsErr(true)
+		return
+	}
+
 	const studyCode = '39e47a8d-9563-48dd-a5d4-d03a875f2dca'
+
+	if (participantCode === 'dojo') {
+		localStorage.setItem('participantCode', participantCode)
+		localStorage.setItem('sessionCode', "dojo")
+		localStorage.setItem('isLogging', "false")
+		setHasTokens(true)
+		setSuccess(true)
+		return
+	}
 
 	createSessionRequest(studyCode, participantCode).then(data => {
 		if (data.token) {
 			console.log('Session created successfully', data.token);
 			localStorage.setItem('participantCode', participantCode)
 			localStorage.setItem('sessionCode', data.token)
+			localStorage.setItem('isLogging', "true")
 			setHasTokens(true)
 			setSuccess(true)
 		}

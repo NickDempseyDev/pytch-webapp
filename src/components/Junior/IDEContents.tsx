@@ -14,7 +14,6 @@ import SessionForm from "./SessionForm";
 
 export const IDEContents: React.FC<EmptyProps> = () => {
   const [hasTokens, setHasTokens] = useState(false);
-  const logging = false;
   const projectName = useStoreState(
     (state) => state.activeProject.project.name
   );
@@ -38,8 +37,6 @@ export const IDEContents: React.FC<EmptyProps> = () => {
     if (localStorage.getItem("sessionCode")) {
       setHasTokens(true);
     }
-
-    localStorage.setItem("isLogging", logging.toString());
 
   }, []);
 

@@ -17,7 +17,7 @@ const BroadcastAndWaitFrame = ({ frame, editFrame, setIsEditingText, actorId, ha
 
 	return (
 		<div>
-			pytch.broadcast_and_wait(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />)
+			pytch.broadcast_and_wait("<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />")
 		</div>
 	)
 }

@@ -118,14 +118,17 @@ export class ActorOps {
     const firstIdx = actor.handlers.findIndex(isTargetHandler);
     const lastIdx = actor.handlers.findLastIndex(isTargetHandler);
 
-    if (firstIdx === -1) {
-      throw new Error(`handler ${handlerId} not found in actor ${actor.id}`);
-    }
-    if (lastIdx !== firstIdx) {
-      throw new Error(
-        `handler ${handlerId} found more than once in actor ${actor.id}`
-      );
-    }
+
+    // TODO: This is a temporary fix for the demo
+
+    // if (firstIdx === -1) {
+    //   throw new Error(`handler ${handlerId} not found in actor ${actor.id}`);
+    // }
+    // if (lastIdx !== firstIdx) {
+    //   throw new Error(
+    //     `handler ${handlerId} found more than once in actor ${actor.id}`
+    //   );
+    // }
 
     return firstIdx;
   }

@@ -141,7 +141,7 @@ const Frame: React.FC<FrameProps> = ({ actorId, handlerId, frame, moveFrame, edi
         <CloseButton onClick={() => removeFrame()} />
       </div>
       {frame.canHaveChildren &&
-        <div className={`child-frame`}>
+        <div className={`child-frame ${frame.children.length === 0 ? 'child-frame-empty' : ''}`}>
           {renderChildren(frame)}
         </div>}
     </div>
