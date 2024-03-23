@@ -93,16 +93,17 @@ export const TutorialSummaryDisplay: React.FC<TutorialSummaryDisplayProps> = ({
           </div>
         )}
         <div className="button-bar" ref={buttonsRef}>
-          {showDemoButton && (
+          {/* {showDemoButton && (
             <Button
               title="Try this project"
               disabled={loadingSomeTutorial}
               variant="outline-primary"
               onClick={launchDemo}
+              disabled
             >
               Demo
             </Button>
-          )}
+          )} */}
           <Button
             title="Learn how to make this project"
             disabled={loadingSomeTutorial}
