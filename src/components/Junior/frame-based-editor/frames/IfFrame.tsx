@@ -15,7 +15,7 @@ const IfFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }: IfF
     editFrame({ actorId, handlerId, newFrame: { ...frame, booleanExpression: event.target.value } })
   }
   return (
-    <div>if <input type="text" value={frame.booleanExpression} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
+    <div>if <input spellCheck={false} type="text" value={frame.booleanExpression} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
   )
 }
 

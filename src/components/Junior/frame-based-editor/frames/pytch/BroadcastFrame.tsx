@@ -17,7 +17,7 @@ const BroadcastFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId
 
 	return (
 		<div>
-			pytch.broadcast("<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />")
+			pytch.broadcast("<input spellCheck={false} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />")
 		</div>
 	)
 }

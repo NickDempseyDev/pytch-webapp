@@ -20,7 +20,7 @@ const ForFrame = ({ frame, editFrame, setIsEditingText, handlerId, actorId }: Fo
   }
 
   return (
-    <div>for <input type="text" value={frame.iterator} onChange={changeIteratorInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} /> in <input type="text" value={frame.collection} onChange={changeCollectionInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
+    <div>for <input spellCheck={false} type="text" value={frame.iterator} onChange={changeIteratorInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} /> in <input spellCheck={false} type="text" value={frame.collection} onChange={changeCollectionInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
   )
 }
 

@@ -16,7 +16,7 @@ const WhileFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }: 
   }
 
   return (
-    <div>while <input type="text" value={frame.booleanExpression} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
+    <div>while <input spellCheck={false} type="text" value={frame.booleanExpression} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />:</div>
   )
 }
 

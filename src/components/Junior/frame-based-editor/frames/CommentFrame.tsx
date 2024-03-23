@@ -15,7 +15,7 @@ const CommentFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }
     editFrame({ actorId, handlerId, newFrame: { ...frame, text: event.target.value } })
   }
   return (
-    <div># <input type="text" value={frame.text} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} /></div>
+    <div># <input spellCheck={false} type="text" value={frame.text} onChange={changeInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} /></div>
   )
 }
 

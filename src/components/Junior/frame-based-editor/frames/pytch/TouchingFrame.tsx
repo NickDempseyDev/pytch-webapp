@@ -17,7 +17,7 @@ const TouchingFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId 
 
 	return (
 		<div>
-			self.touching(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.object} onChange={changeValueInput} />)
+			self.touching(<input spellCheck={false} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.object} onChange={changeValueInput} />)
 		</div>
 	)
 }

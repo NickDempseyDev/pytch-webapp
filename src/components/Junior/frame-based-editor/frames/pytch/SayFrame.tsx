@@ -17,7 +17,7 @@ const SayFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerId }: Sa
 
 	return (
 		<div>
-			self.say(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />)
+			self.say(<input spellCheck={false} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.message} onChange={changeValueInput} />)
 		</div>
 	)
 }

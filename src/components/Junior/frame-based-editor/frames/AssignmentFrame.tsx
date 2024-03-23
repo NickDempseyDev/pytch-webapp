@@ -21,9 +21,9 @@ const AssignmentFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerI
 
   return (
     <div>
-      <input type="text" value={frame.variable} onChange={changeVariableInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />
+      <input spellCheck={false} type="text" value={frame.variable} onChange={changeVariableInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />
       =
-      <input type="text" value={frame.value} onChange={changeValueInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />
+      <input spellCheck={false} type="text" value={frame.value} onChange={changeValueInput} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} />
     </div>
   )
 }

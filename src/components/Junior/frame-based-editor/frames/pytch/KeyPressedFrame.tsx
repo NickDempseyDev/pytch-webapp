@@ -17,7 +17,7 @@ const KeyPressedFrame = ({ frame, editFrame, setIsEditingText, actorId, handlerI
 
 	return (
 		<div>
-			pytch.key_pressed(<input onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.key} onChange={changeValueInput} />)
+			pytch.key_pressed(<input spellCheck={false} onFocus={() => setIsEditingText(true)} onBlur={() => setIsEditingText(false)} value={frame.key} onChange={changeValueInput} />)
 		</div>
 	)
 }
